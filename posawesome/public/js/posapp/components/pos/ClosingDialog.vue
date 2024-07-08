@@ -30,7 +30,7 @@
                           <v-text-field
                             v-model="props.item.closing_amount"
                             :rules="[max25chars]"
-                            :label="frappe._('Edit')"
+                            :label="__('Edit')"
                             single-line
                             counter
                             type="number"

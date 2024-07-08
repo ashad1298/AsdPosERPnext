@@ -45,7 +45,7 @@
             color="primary"
             background-color="white"
             :items="invoiceTypes"
-            :label="frappe._('Type')"
+            :label="__('Type')"
             v-model="invoiceType"
             :disabled="invoiceType == 'Return'"
           ></v-select>
@@ -64,7 +64,7 @@
             auto-select-first
             outlined
             color="primary"
-            :label="frappe._('Delivery Charges')"
+            :label="__('Delivery Charges')"
             v-model="selcted_delivery_charges"
             :items="delivery_charges"
             item-text="name"
@@ -96,7 +96,7 @@
             dense
             outlined
             color="primary"
-            :label="frappe._('Delivery Charges Rate')"
+            :label="__('Delivery Charges Rate')"
             background-color="white"
             hide-details
             :value="formtCurrency(delivery_charges_rate)"
@@ -125,7 +125,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="posting_date"
-                :label="frappe._('Posting Date')"
+                :label="__('Posting Date')"
                 readonly
                 outlined
                 dense
@@ -230,7 +230,7 @@
                       dense
                       outlined
                       color="primary"
-                      :label="frappe._('Item Code')"
+                      :label="__('Item Code')"
                       background-color="white"
                       hide-details
                       v-model="item.item_code"
@@ -242,7 +242,7 @@
                       dense
                       outlined
                       color="primary"
-                      :label="frappe._('QTY')"
+                      :label="__('QTY')"
                       background-color="white"
                       hide-details
                       :value="formtFloat(item.qty)"
@@ -260,7 +260,7 @@
                     <v-select
                       dense
                       background-color="white"
-                      :label="frappe._('UOM')"
+                      :label="__('UOM')"
                       v-model="item.uom"
                       :items="item.item_uoms"
                       outlined
@@ -281,7 +281,7 @@
                       dense
                       outlined
                       color="primary"
-                      :label="frappe._('Rate')"
+                      :label="__('Rate')"
                       background-color="white"
                       hide-details
                       :prefix="currencySymbol(pos_profile.currency)"
@@ -316,7 +316,7 @@
                       dense
                       outlined
                       color="primary"
-                      :label="frappe._('Discount Percentage')"
+                      :label="__('Discount Percentage')"
                       background-color="white"
                       hide-details
                       :value="formtFloat(item.discount_percentage)"
@@ -351,7 +351,7 @@
                       dense
                       outlined
                       color="primary"
-                      :label="frappe._('Discount Amount')"
+                      :label="__('Discount Amount')"
                       background-color="white"
                       hide-details
                       :value="formtCurrency(item.discount_amount)"
@@ -387,7 +387,7 @@
                       dense
                       outlined
                       color="primary"
-                      :label="frappe._('Price list Rate')"
+                      :label="__('Price list Rate')"
                       background-color="white"
                       hide-details
                       :value="formtCurrency(item.price_list_rate)"
@@ -400,7 +400,7 @@
                       dense
                       outlined
                       color="primary"
-                      :label="frappe._('Available QTY')"
+                      :label="__('Available QTY')"
                       background-color="white"
                       hide-details
                       :value="formtFloat(item.actual_qty)"
@@ -412,7 +412,7 @@
                       dense
                       outlined
                       color="primary"
-                      :label="frappe._('Group')"
+                      :label="__('Group')"
                       background-color="white"
                       hide-details
                       v-model="item.item_group"
@@ -424,7 +424,7 @@
                       dense
                       outlined
                       color="primary"
-                      :label="frappe._('Stock QTY')"
+                      :label="__('Stock QTY')"
                       background-color="white"
                       hide-details
                       :value="formtFloat(item.stock_qty)"
@@ -436,7 +436,7 @@
                       dense
                       outlined
                       color="primary"
-                      :label="frappe._('Stock UOM')"
+                      :label="__('Stock UOM')"
                       background-color="white"
                       hide-details
                       v-model="item.stock_uom"
@@ -446,7 +446,7 @@
                   <v-col align="center" cols="4" v-if="item.posa_offer_applied">
                     <v-checkbox
                       dense
-                      :label="frappe._('Offer Applied')"
+                      :label="__('Offer Applied')"
                       v-model="item.posa_offer_applied"
                       readonly
                       hide-details
@@ -461,7 +461,7 @@
                       dense
                       outlined
                       color="primary"
-                      :label="frappe._('Serial No QTY')"
+                      :label="__('Serial No QTY')"
                       background-color="white"
                       hide-details
                       v-model="item.serial_no_selected_count"
@@ -482,7 +482,7 @@
                       chips
                       color="primary"
                       small-chips
-                      :label="frappe._('Serial No')"
+                      :label="__('Serial No')"
                       multiple
                       @change="set_serial_no(item)"
                     ></v-autocomplete>
@@ -495,7 +495,7 @@
                       dense
                       outlined
                       color="primary"
-                      :label="frappe._('Batch No. Available QTY')"
+                      :label="__('Batch No. Available QTY')"
                       background-color="white"
                       hide-details
                       :value="formtFloat(item.actual_batch_qty)"
@@ -510,7 +510,7 @@
                       dense
                       outlined
                       color="primary"
-                      :label="frappe._('Batch No Expiry Date')"
+                      :label="__('Batch No Expiry Date')"
                       background-color="white"
                       hide-details
                       v-model="item.batch_no_expiry_date"
@@ -528,7 +528,7 @@
                       outlined
                       dense
                       color="primary"
-                      :label="frappe._('Batch No')"
+                      :label="__('Batch No')"
                       @change="set_batch_qty(item, $event)"
                     >
                       <template v-slot:item="data">
@@ -565,7 +565,7 @@
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
                           v-model="item.posa_delivery_date"
-                          :label="frappe._('Delivery Date')"
+                          :label="__('Delivery Date')"
                           readonly
                           outlined
                           dense
@@ -620,7 +620,7 @@
                       color="primary"
                       auto-grow
                       rows="1"
-                      :label="frappe._('Additional Notes')"
+                      :label="__('Additional Notes')"
                       v-model="item.posa_notes"
                       :value="item.posa_notes"
                     ></v-textarea>
@@ -639,7 +639,7 @@
             <v-col cols="6" class="pa-1">
               <v-text-field
                 :value="formtFloat(total_qty)"
-                :label="frappe._('Total Qty')"
+                :label="__('Total Qty')"
                 outlined
                 dense
                 readonly
@@ -664,7 +664,7 @@
                   )
                 "
                 :rules="[isNumber]"
-                :label="frappe._('Additional Discount')"
+                :label="__('Additional Discount')"
                 ref="discount"
                 outlined
                 dense
@@ -699,7 +699,7 @@
                   ]
                 "
                 :rules="[isNumber]"
-                :label="frappe._('Additional Discount %')"
+                :label="__('Additional Discount %')"
                 suffix="%"
                 ref="percentage_discount"
                 outlined
@@ -718,7 +718,7 @@
               <v-text-field
                 :value="formtCurrency(total_items_discount_amount)"
                 :prefix="currencySymbol(pos_profile.currency)"
-                :label="frappe._('Items Discounts')"
+                :label="__('Items Discounts')"
                 outlined
                 dense
                 color="warning"
@@ -731,7 +731,7 @@
               <v-text-field
                 :value="formtCurrency(subtotal)"
                 :prefix="currencySymbol(pos_profile.currency)"
-                :label="frappe._('Total')"
+                :label="__('Total')"
                 outlined
                 dense
                 readonly

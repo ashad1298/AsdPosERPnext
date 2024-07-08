@@ -15,7 +15,7 @@
             <v-row class="mb-4">
               <v-text-field
                 color="primary"
-                :label="frappe._('Order ID')"
+                :label="__('Order ID')"
                 background-color="white"
                 hide-details
                 v-model="order_name"
