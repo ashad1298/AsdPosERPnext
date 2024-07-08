@@ -15,7 +15,6 @@ from erpnext.accounts.party import get_party_bank_account
 from erpnext.stock.doctype.batch.batch import (
     get_batch_no,
     get_batch_qty,
-    set_batch_nos,
 )
 from erpnext.accounts.doctype.payment_request.payment_request import (
     get_dummy_message,
@@ -94,7 +93,8 @@ def create_opening_voucher(pos_profile, company, balance_details):
 
 
 @frappe.whitelist()
-def check_opening_shift(user):
+def check_opening_shift(user=None):
+    user = frappe.session.user
     open_vouchers = frappe.db.get_all(
         "POS Opening Shift",
         filters={
@@ -619,8 +619,8 @@ def submit_invoice(invoice, data):
 
     payments = invoice_doc.payments
 
-    if frappe.get_value("POS Profile", invoice_doc.pos_profile, "posa_auto_set_batch"):
-        set_batch_nos(invoice_doc, "warehouse", throw=True)
+    # if frappe.get_value("POS Profile", invoice_doc.pos_profile, "posa_auto_set_batch"):
+    #     set_batch_nos(invoice_doc, "warehouse", throw=True)
     set_batch_nos_for_bundels(invoice_doc, "warehouse", throw=True)
 
     invoice_doc.flags.ignore_permissions = True

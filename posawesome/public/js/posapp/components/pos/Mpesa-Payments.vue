@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { evntBus } from '../../bus';
+import { eventBus } from '../../bus';
 export default {
   data: () => ({
     dialog: false,
@@ -151,7 +151,7 @@ export default {
           async: false,
           callback: function (r) {
             if (!r.exc) {
-              evntBus.$emit('set_mpesa_payment', r.message);
+              eventBus.emit('set_mpesa_payment', r.message);
               vm.dialog = false;
             }
           },
@@ -164,7 +164,7 @@ export default {
     },
   },
   created: function () {
-    evntBus.$on('open_mpesa_payments', (data) => {
+    eventBus.on('open_mpesa_payments', (data) => {
       this.dialog = true;
       this.full_name = '';
       this.mobile_no = '';
@@ -176,7 +176,7 @@ export default {
     });
   },
   beforeDestroy() {
-    evntBus.$off('open_mpesa_payments');
+    eventBus.off('open_mpesa_payments');
   },
 };
 </script>

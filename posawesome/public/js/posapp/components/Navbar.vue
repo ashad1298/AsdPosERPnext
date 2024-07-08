@@ -1,6 +1,6 @@
 <template>
-  <nav>
-    <v-app-bar app height="40" class="elevation-2">
+    <nav>
+      <v-app-bar app height="40" class="elevation-2">
       <v-app-bar-nav-icon
         @click.stop="drawer = !drawer"
         class="grey--text"
@@ -17,14 +17,14 @@
         style="cursor: pointer"
         class="text-uppercase primary--text"
       >
-        <span class="font-weight-light">pos</span>
-        <span>awesome</span>
-      </v-toolbar-title>
+          <span class="font-weight-light">pos</span>
+          <span>awesome</span>
+        </v-toolbar-title>
 
-      <v-spacer></v-spacer>
-      <v-btn style="cursor: unset" text color="primary">
+        <v-spacer></v-spacer>
+        <v-btn style="cursor: unset" text color="primary">
         <span right>{{ pos_profile.name }}</span>
-      </v-btn>
+        </v-btn>
       <div class="text-center">
         <v-menu offset-y>
           <template v-slot:activator="{ on, attrs }">
@@ -86,7 +86,7 @@
           </v-card>
         </v-menu>
       </div>
-    </v-app-bar>
+      </v-app-bar>
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant.sync="mini"
@@ -94,20 +94,20 @@
       class="primary margen-top"
       width="170"
     >
-      <v-list dark>
-        <v-list-item class="px-2">
+        <v-list dark>
+          <v-list-item class="px-2">
           <v-list-item-avatar>
             <v-img :src="company_img"></v-img>
           </v-list-item-avatar>
 
-          <v-list-item-title>{{ company }}</v-list-item-title>
+            <v-list-item-title>{{ company }}</v-list-item-title>
 
           <v-btn icon @click.stop="mini = !mini">
             <v-icon>mdi-chevron-left</v-icon>
           </v-btn>
-        </v-list-item>
+          </v-list-item>
         <!-- <MyPopup/> -->
-        <v-list-item-group v-model="item" color="white">
+          <v-list-item-group v-model="item" color="white">
           <v-list-item
             v-for="item in items"
             :key="item.text"
@@ -119,26 +119,26 @@
             <v-list-item-content>
               <v-list-item-title v-text="item.text"></v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-    </v-navigation-drawer>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-navigation-drawer>
     <v-snackbar v-model="snack" :timeout="5000" :color="snackColor" top right>
       {{ snackText }}
     </v-snackbar>
-    <v-dialog v-model="freeze" persistent max-width="290">
-      <v-card>
+      <v-dialog v-model="freeze" persistent max-width="290">
+        <v-card>
         <v-card-title class="text-h5">
           {{ freezeTitle }}
         </v-card-title>
-        <v-card-text>{{ freezeMsg }}</v-card-text>
-      </v-card>
-    </v-dialog>
-  </nav>
+          <v-card-text>{{ freezeMsg }}</v-card-text>
+        </v-card>
+      </v-dialog>
+    </nav>
 </template>
 
 <script>
-import { evntBus } from '../bus';
+import { eventBus } from '../bus';
 
 export default {
   // components: {MyPopup},
@@ -182,7 +182,7 @@ export default {
       win.focus();
     },
     close_shift_dialog() {
-      evntBus.$emit('open_closing_dialog');
+      eventBus.emit('open_closing_dialog');
     },
     show_mesage(data) {
       this.snack = true;
@@ -230,16 +230,16 @@ export default {
   },
   created: function () {
     this.$nextTick(function () {
-      evntBus.$on('show_mesage', (data) => {
+      eventBus.on('show_mesage', (data) => {
         this.show_mesage(data);
       });
-      evntBus.$on('set_company', (data) => {
+      eventBus.on('set_company', (data) => {
         this.company = data.name;
         this.company_img = data.company_logo
           ? data.company_logo
           : this.company_img;
       });
-      evntBus.$on('register_pos_profile', (data) => {
+      eventBus.on('register_pos_profile', (data) => {
         this.pos_profile = data.pos_profile;
         const payments = { text: 'Payments', icon: 'mdi-cash-register' };
         if (
@@ -249,15 +249,15 @@ export default {
           this.items.push(payments);
         }
       });
-      evntBus.$on('set_last_invoice', (data) => {
+      eventBus.on('set_last_invoice', (data) => {
         this.last_invoice = data;
       });
-      evntBus.$on('freeze', (data) => {
+      eventBus.on('freeze', (data) => {
         this.freeze = true;
         this.freezeTitle = data.title;
         this.freezeMsg = data.msg;
       });
-      evntBus.$on('unfreeze', () => {
+      eventBus.on('unfreeze', () => {
         this.freeze = false;
         this.freezTitle = '';
         this.freezeMsg = '';

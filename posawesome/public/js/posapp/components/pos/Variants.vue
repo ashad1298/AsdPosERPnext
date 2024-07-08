@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { evntBus } from '../../bus';
+import { eventBus } from '../../bus';
 export default {
   data: () => ({
     varaintsDialog: false,
@@ -135,13 +135,13 @@ export default {
       });
     },
     add_item(item) {
-      evntBus.$emit('add_item', item);
+      eventBus.emit('add_item', item);
       this.close_dialog();
     },
   },
 
   created: function () {
-    evntBus.$on('open_variants_model', (item, items) => {
+    eventBus.on('open_variants_model', (item, items) => {
       this.varaintsDialog = true;
       this.parentItem = item || null;
       this.items = items;

@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import { evntBus } from '../../bus';
+import { eventBus } from '../../bus';
 export default {
   data: () => ({
     addressDialog: false,
@@ -101,8 +101,8 @@ export default {
         },
         callback: (r) => {
           if (!r.exc) {
-            evntBus.$emit('add_the_new_address', r.message);
-            evntBus.$emit('show_mesage', {
+            eventBus.emit('add_the_new_address', r.message);
+            eventBus.emit('show_mesage', {
               text: 'Customer Address created successfully.',
               color: 'success',
             });
@@ -115,7 +115,7 @@ export default {
     },
   },
   created: function () {
-    evntBus.$on('open_new_address', (data) => {
+    eventBus.on('open_new_address', (data) => {
       this.addressDialog = true;
       this.customer = data;
     });

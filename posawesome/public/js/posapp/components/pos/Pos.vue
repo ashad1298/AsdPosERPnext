@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { evntBus } from '../../bus';
+import { eventBus } from '../../bus';
 import ItemsSelector from './ItemsSelector.vue';
 import Invoice from './Invoice.vue';
 import OpeningDialog from './OpeningDialog.vue';
@@ -117,8 +117,8 @@ export default {
             this.pos_profile = r.message.pos_profile;
             this.pos_opening_shift = r.message.pos_opening_shift;
             this.get_offers(this.pos_profile.name);
-            evntBus.$emit('register_pos_profile', r.message);
-            evntBus.$emit('set_company', r.message.company);
+            eventBus.emit('register_pos_profile', r.message);
+            eventBus.emit('set_company', r.message.company);
             console.info('LoadPosProfile');
           } else {
             this.create_opening_voucher();
@@ -138,7 +138,7 @@ export default {
         )
         .then((r) => {
           if (r.message) {
-            evntBus.$emit('open_ClosingDialog', r.message);
+            eventBus.emit('open_ClosingDialog', r.message);
           } else {
             // console.log(r);
           }
@@ -154,7 +154,7 @@ export default {
         )
         .then((r) => {
           if (r.message) {
-            evntBus.$emit('show_mesage', {
+            eventBus.emit('show_mesage', {
               text: `POS Shift Closed`,
               color: 'success',
             });
@@ -172,13 +172,13 @@ export default {
         .then((r) => {
           if (r.message) {
             console.info('LoadOffers');
-            evntBus.$emit('set_offers', r.message);
+            eventBus.emit('set_offers', r.message);
           }
         });
     },
     get_pos_setting() {
       frappe.db.get_doc('POS Settings', undefined).then((doc) => {
-        evntBus.$emit('set_pos_settings', doc);
+        eventBus.emit('set_pos_settings', doc);
       });
     },
   },
@@ -187,47 +187,47 @@ export default {
     this.$nextTick(function () {
       this.check_opening_entry();
       this.get_pos_setting();
-      evntBus.$on('close_opening_dialog', () => {
+      eventBus.on('close_opening_dialog', () => {
         this.dialog = false;
       });
-      evntBus.$on('register_pos_data', (data) => {
+      eventBus.on('register_pos_data', (data) => {
         this.pos_profile = data.pos_profile;
         this.get_offers(this.pos_profile.name);
         this.pos_opening_shift = data.pos_opening_shift;
-        evntBus.$emit('register_pos_profile', data);
+        eventBus.emit('register_pos_profile', data);
         console.info('LoadPosProfile');
       });
-      evntBus.$on('show_payment', (data) => {
+      eventBus.on('show_payment', (data) => {
         this.payment = true ? data === 'true' : false;
         this.offers = false ? data === 'true' : false;
         this.coupons = false ? data === 'true' : false;
       });
-      evntBus.$on('show_offers', (data) => {
+      eventBus.on('show_offers', (data) => {
         this.offers = true ? data === 'true' : false;
         this.payment = false ? data === 'true' : false;
         this.coupons = false ? data === 'true' : false;
       });
-      evntBus.$on('show_coupons', (data) => {
+      eventBus.on('show_coupons', (data) => {
         this.coupons = true ? data === 'true' : false;
         this.offers = false ? data === 'true' : false;
         this.payment = false ? data === 'true' : false;
       });
-      evntBus.$on('open_closing_dialog', () => {
+      eventBus.on('open_closing_dialog', () => {
         this.get_closing_data();
       });
-      evntBus.$on('submit_closing_pos', (data) => {
+      eventBus.on('submit_closing_pos', (data) => {
         this.submit_closing_pos(data);
       });
     });
   },
   beforeDestroy() {
-    evntBus.$off('close_opening_dialog');
-    evntBus.$off('register_pos_data');
-    evntBus.$off('LoadPosProfile');
-    evntBus.$off('show_offers');
-    evntBus.$off('show_coupons');
-    evntBus.$off('open_closing_dialog');
-    evntBus.$off('submit_closing_pos');
+    eventBus.off('close_opening_dialog');
+    eventBus.off('register_pos_data');
+    eventBus.off('LoadPosProfile');
+    eventBus.off('show_offers');
+    eventBus.off('show_coupons');
+    eventBus.off('open_closing_dialog');
+    eventBus.off('submit_closing_pos');
   },
 };
 </script>

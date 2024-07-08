@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { evntBus } from '../../bus';
+import { eventBus } from '../../bus';
 import format from '../../format';
 export default {
   mixins: [format],
@@ -147,13 +147,13 @@ export default {
         invoice_doc.return_against = return_doc.name;
         invoice_doc.customer = return_doc.customer;
         const data = { invoice_doc, return_doc };
-        evntBus.$emit('load_return_invoice', data);
+        eventBus.emit('load_return_invoice', data);
         this.invoicesDialog = false;
       }
     },
   },
   created: function () {
-    evntBus.$on('open_returns', (data) => {
+    eventBus.on('open_returns', (data) => {
       this.invoicesDialog = true;
       this.company = data;
       this.invoice_name = '';
