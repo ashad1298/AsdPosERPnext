@@ -9,48 +9,44 @@
       :label="__('Customer')"
       v-model="customer"
       :items="customers"
-      item-text="customer_name"
-      item-value="name"
+      item-title="customer_name"
+      item-key="name"
       background-color="white"
       :no-data-text="__('Customer not found')"
       hide-details
-      :filter="customFilter"
+      
       :disabled="readonly"
       append-icon="mdi-plus"
       @click:append="new_customer"
       prepend-inner-icon="mdi-account-edit"
       @click:prepend-inner="edit_customer"
     >
-      <template v-slot:item="data">
-        <template>
-          <v-list-item-content>
-            <v-list-item-title
-              class="primary--text subtitle-1"
-              v-html="data.item.customer_name"
-            ></v-list-item-title>
-            <v-list-item-subtitle
-              v-if="data.item.customer_name != data.item.name"
-              v-html="`ID: ${data.item.name}`"
-            ></v-list-item-subtitle>
-            <v-list-item-subtitle
-              v-if="data.item.tax_id"
-              v-html="`TAX ID: ${data.item.tax_id}`"
-            ></v-list-item-subtitle>
-            <v-list-item-subtitle
-              v-if="data.item.email_id"
-              v-html="`Email: ${data.item.email_id}`"
-            ></v-list-item-subtitle>
-            <v-list-item-subtitle
-              v-if="data.item.mobile_no"
-              v-html="`Mobile No: ${data.item.mobile_no}`"
-            ></v-list-item-subtitle>
-            <v-list-item-subtitle
-              v-if="data.item.primary_address"
-              v-html="`Primary Address: ${data.item.primary_address}`"
-            ></v-list-item-subtitle>
-          </v-list-item-content>
+      <template v-slot:item="{props, item}">
+          <v-list style="padding-left: 10px !important;">
+            <v-list-item v-bind="props">
+              <v-list-item-subtitle
+                v-if="item.raw.customer_name != item.raw.name"
+                v-text="`ID: ${item.raw.name}`"
+              ></v-list-item-subtitle>
+              <v-list-item-subtitle
+                v-if="item.raw.tax_id"
+                v-text="`TAX ID: ${item.raw.tax_id}`"
+              ></v-list-item-subtitle>
+              <v-list-item-subtitle
+                v-if="item.raw.email_id"
+                v-text="`Email: ${item.raw.email_id}`"
+              ></v-list-item-subtitle>
+              <v-list-item-subtitle
+                v-if="item.raw.mobile_no"
+                v-text="`Mobile No: ${item.raw.mobile_no}`"
+              ></v-list-item-subtitle>
+              <v-list-item-subtitle
+                v-if="item.raw.primary_address"
+                v-text="`Primary Address: ${item.raw.primary_address}`"
+              ></v-list-item-subtitle>
+            </v-list-item>
+          </v-list>
         </template>
-      </template>
     </v-autocomplete>
     <div class="mb-8">
       <UpdateCustomer></UpdateCustomer>
@@ -110,6 +106,8 @@ export default {
       eventBus.emit('open_update_customer', this.customer_info);
     },
     customFilter(item, queryText, itemText) {
+      console.log(item, queryText);
+
       const textOne = item.customer_name
         ? item.customer_name.toLowerCase()
         : '';

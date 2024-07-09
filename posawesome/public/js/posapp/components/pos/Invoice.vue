@@ -704,7 +704,7 @@ export default {
         if (item.has_serial_no && item.to_set_serial_no) {
           if (cur_item.serial_no_selected.includes(item.to_set_serial_no)) {
             eventBus.emit("show_mesage", {
-              title: __(`This Serial Number {0} has already been added!`, [
+              text: __(`This Serial Number {0} has already been added!`, [
                 item.to_set_serial_no,
               ]),
               color: "warning",
@@ -1166,14 +1166,14 @@ export default {
     async show_payment() {
       if (!this.customer) {
         eventBus.emit("show_mesage", {
-          title: __(`There is no Customer !`),
+          text: __(`There is no Customer !`),
           color: "error",
         });
         return;
       }
       if (!this.items.length) {
         eventBus.emit("show_mesage", {
-          title: __(`There is no Items !`),
+          text: __(`There is no Items !`),
           color: "error",
         });
         return;
@@ -1234,7 +1234,7 @@ export default {
               discount_percentage > this.pos_profile.posa_max_discount_allowed
             ) {
               eventBus.emit("show_mesage", {
-                title: __(
+                text: __(
                   `Discount percentage for item '{0}' cannot be greater than {1}%`,
                   [item.item_name, this.pos_profile.posa_max_discount_allowed]
                 ),
@@ -1251,7 +1251,7 @@ export default {
               (item.is_stock_item && item.stock_qty > item.actual_qty))
           ) {
             eventBus.emit("show_mesage", {
-              title: __(
+              text: __(
                 `The existing quantity '{0}' for item '{1}' is not enough`,
                 [item.actual_qty, item.item_name]
               ),
@@ -1262,7 +1262,7 @@ export default {
         }
         if (item.qty == 0) {
           eventBus.emit("show_mesage", {
-            title: __(`Quantity for item '{0}' cannot be Zero (0)`, [
+            text: __(`Quantity for item '{0}' cannot be Zero (0)`, [
               item.item_name,
             ]),
             color: "error",
@@ -1274,7 +1274,7 @@ export default {
           item.discount_percentage > item.max_discount
         ) {
           eventBus.emit("show_mesage", {
-            title: __(`Maximum discount for Item {0} is {1}%`, [
+            text: __(`Maximum discount for Item {0} is {1}%`, [
               item.item_name,
               item.max_discount,
             ]),
@@ -1289,7 +1289,7 @@ export default {
               item.stock_qty != item.serial_no_selected.length)
           ) {
             eventBus.emit("show_mesage", {
-              title: __(`Selected serial numbers of item {0} is incorrect`, [
+              text: __(`Selected serial numbers of item {0} is incorrect`, [
                 item.item_name,
               ]),
               color: "error",
@@ -1300,7 +1300,7 @@ export default {
         if (item.has_batch_no) {
           if (item.stock_qty > item.actual_batch_qty) {
             eventBus.emit("show_mesage", {
-              title: __(
+              text: __(
                 `The existing batch quantity of item {0} is not enough`,
                 [item.item_name]
               ),
@@ -1313,7 +1313,7 @@ export default {
           const clac_percentage = (this.discount_amount / this.Total) * 100;
           if (clac_percentage > this.pos_profile.posa_max_discount_allowed) {
             eventBus.emit("show_mesage", {
-              title: __(`The discount should not be higher than {0}%`, [
+              text: __(`The discount should not be higher than {0}%`, [
                 this.pos_profile.posa_max_discount_allowed,
               ]),
               color: "error",
@@ -1324,7 +1324,7 @@ export default {
         if (this.invoice_doc.is_return) {
           if (this.subtotal >= 0) {
             eventBus.emit("show_mesage", {
-              title: __(`Return Invoice Total Not Correct`),
+              text: __(`Return Invoice Total Not Correct`),
               color: "error",
             });
             value = false;
@@ -1332,7 +1332,7 @@ export default {
           }
           if (Math.abs(this.subtotal) > Math.abs(this.return_doc.total)) {
             eventBus.emit("show_mesage", {
-              title: __(`Return Invoice Total should not be higher than {0}`, [
+              text: __(`Return Invoice Total should not be higher than {0}`, [
                 this.return_doc.total,
               ]),
               color: "error",
@@ -1347,7 +1347,7 @@ export default {
 
             if (!return_item) {
               eventBus.emit("show_mesage", {
-                title: __(
+                text: __(
                   `The item {0} cannot be returned because it is not in the invoice {1}`,
                   [item.item_name, this.return_doc.name]
                 ),
@@ -1360,7 +1360,7 @@ export default {
               Math.abs(item.qty) == 0
             ) {
               eventBus.emit("show_mesage", {
-                title: __(`The QTY of the item {0} cannot be greater than {1}`, [
+                text: __(`The QTY of the item {0} cannot be greater than {1}`, [
                   item.item_name,
                   return_item.qty,
                 ]),
@@ -2318,7 +2318,7 @@ export default {
       }
       if (offer.offer === "Loyalty Point") {
         eventBus.emit("show_mesage", {
-          title: __("Loyalty Point Offer Applied"),
+          text: __("Loyalty Point Offer Applied"),
           color: "success",
         });
       }
@@ -2539,7 +2539,7 @@ export default {
     print_draft_invoice() {
       if (!this.pos_profile.posa_allow_print_draft_invoices) {
         eventBus.emit("show_mesage", {
-          title: __(`You are not allowed to print draft invoices`),
+          text: __(`You are not allowed to print draft invoices`),
           color: "error",
         });
         return;
