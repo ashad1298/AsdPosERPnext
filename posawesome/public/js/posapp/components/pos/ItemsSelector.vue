@@ -66,7 +66,7 @@
                 cols="6"
                 min-height="50"
               >
-                <v-card hover="hover" @click="add_item(item)">
+                <v-card hover="hover" @click="add_item(null, item)">
                   <v-img
                     :src="
                       item.image ||
@@ -304,20 +304,20 @@ export default {
     getItmesHeaders() {
       const items_headers = [
         {
-          text: __("Name"),
+          title: __("Name"),
           align: "start",
           sortable: true,
-          value: "item_name",
+          key: "item_name",
         },
         {
-          text: __("Code"),
+          title: __("Code"),
           align: "start",
           sortable: true,
-          value: "item_code",
+          key: "item_code",
         },
-        { text: __("Rate"), value: "rate", align: "start" },
-        { text: __("Available QTY"), value: "actual_qty", align: "start" },
-        { text: __("UOM"), value: "stock_uom", align: "start" },
+        { title: __("Rate"), key: "rate", align: "start" },
+        { title: __("Available QTY"), key: "actual_qty", align: "start" },
+        { title: __("UOM"), key: "stock_uom", align: "start" },
       ];
       if (!this.pos_profile.posa_display_item_code) {
         items_headers.splice(1, 1);
@@ -325,8 +325,13 @@ export default {
 
       return items_headers;
     },
-    add_item(item) {
+    add_item(event, item) {
+      if(event){
+        item = item.item
+      }
+
       item = { ...item };
+      
       if (item.has_variants) {
         eventBus.emit("open_variants_model", item, this.items);
       } else {
@@ -383,7 +388,7 @@ export default {
         new_item.to_set_batch_no = this.flags.batch_no;
       }
       if (match) {
-        this.add_item(new_item);
+        this.add_item(null, new_item);
         this.search = null;
         this.first_search = null;
         this.debounce_search = null;

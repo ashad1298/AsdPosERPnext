@@ -84,20 +84,20 @@ export default {
     pos_profile: '',
     headers: [
       {
-        text: __('Mode of Payment'),
-        value: 'mode_of_payment',
+        title: __('Mode of Payment'),
+        key: 'mode_of_payment',
         align: 'start',
         sortable: true,
       },
       {
-        text: __('Opening Amount'),
+        title: __('Opening Amount'),
         align: 'end',
         sortable: true,
-        value: 'opening_amount',
+        key: 'opening_amount',
       },
       {
-        text: __('Closing Amount'),
-        value: 'closing_amount',
+        title: __('Closing Amount'),
+        key: 'closing_amount',
         align: 'end',
         sortable: true,
       },
@@ -126,14 +126,14 @@ export default {
       this.pos_profile = data.pos_profile;
       if (!this.pos_profile.hide_expected_amount) {
         this.headers.push({
-          text: __('Expected Amount'),
-          value: 'expected_amount',
+          title: __('Expected Amount'),
+          key: 'expected_amount',
           align: 'end',
           sortable: false,
         });
         this.headers.push({
-          text: __('Difference'),
-          value: 'difference',
+          title: __('Difference'),
+          key: 'difference',
           align: 'end',
           sortable: false,
         });

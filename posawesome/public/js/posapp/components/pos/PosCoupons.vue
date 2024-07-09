@@ -88,10 +88,10 @@ export default {
     itemsPerPage: 1000,
     singleExpand: true,
     items_headers: [
-      { text: __('Coupon'), value: 'coupon_code', align: 'start' },
-      { text: __('Type'), value: 'type', align: 'start' },
-      { text: __('Offer'), value: 'pos_offer', align: 'start' },
-      { text: __('Applied'), value: 'applied', align: 'start' },
+      { title: __('Coupon'), key: 'coupon_code', align: 'start' },
+      { title: __('Type'), key: 'type', align: 'start' },
+      { title: __('Offer'), key: 'pos_offer', align: 'start' },
+      { title: __('Applied'), key: 'applied', align: 'start' },
     ],
   }),
 

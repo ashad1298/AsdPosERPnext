@@ -20,7 +20,7 @@
               :label="__('Paid Amount')"
               background-color="white"
               hide-details
-              :value="formatCurrency(total_payments)"
+              :model-value="formatCurrency(total_payments)"
               readonly
               :prefix="currencySymbol(invoice_doc.currency)"
               dense
@@ -33,7 +33,7 @@
               :label="__(diff_lable)"
               background-color="white"
               hide-details
-              :value="formatCurrency(diff_payment)"
+              :model-value="formatCurrency(diff_payment)"
               readonly
               :prefix="currencySymbol(invoice_doc.currency)"
               dense
@@ -63,7 +63,7 @@
               :label="__('Credit Change')"
               background-color="white"
               hide-details
-              :value="formatCurrency(credit_change)"
+              :model-value="formatCurrency(credit_change)"
               readonly
               :prefix="currencySymbol(invoice_doc.currency)"
               dense
@@ -86,7 +86,7 @@
                 :label="__(payment.mode_of_payment)"
                 background-color="white"
                 hide-details
-                :value="formatCurrency(payment.amount)"
+                :model-value="formatCurrency(payment.amount)"
                 @change="
                   setFormatedCurrency(payment, 'amount', null, true, $event)
                 "
@@ -182,7 +182,7 @@
               :label="__('You can redeem upto')"
               background-color="white"
               hide-details
-              :value="formtFloat(available_pioints_amount)"
+              :model-value="formtFloat(available_pioints_amount)"
               :prefix="currencySymbol(invoice_doc.currency)"
               disabled
             ></v-text-field>
@@ -220,7 +220,7 @@
               :label="__('You can redeem credit upto')"
               background-color="white"
               hide-details
-              :value="formatCurrency(available_customer_credit)"
+              :model-value="formatCurrency(available_customer_credit)"
               :prefix="currencySymbol(invoice_doc.currency)"
               disabled
             ></v-text-field>
@@ -237,7 +237,7 @@
               :label="__('Net Total')"
               background-color="white"
               hide-details
-              :value="formatCurrency(invoice_doc.net_total)"
+              :model-value="formatCurrency(invoice_doc.net_total)"
               disabled
               :prefix="currencySymbol(invoice_doc.currency)"
             ></v-text-field>
@@ -250,7 +250,7 @@
               :label="__('Tax and Charges')"
               background-color="white"
               hide-details
-              :value="formatCurrency(invoice_doc.total_taxes_and_charges)"
+              :model-value="formatCurrency(invoice_doc.total_taxes_and_charges)"
               disabled
               :prefix="currencySymbol(invoice_doc.currency)"
             ></v-text-field>
@@ -263,7 +263,7 @@
               :label="__('Total Amount')"
               background-color="white"
               hide-details
-              :value="formatCurrency(invoice_doc.total)"
+              :model-value="formatCurrency(invoice_doc.total)"
               disabled
               :prefix="currencySymbol(invoice_doc.currency)"
             ></v-text-field>
@@ -276,7 +276,7 @@
               :label="__('Discount Amount')"
               background-color="white"
               hide-details
-              :value="formatCurrency(invoice_doc.discount_amount)"
+              :model-value="formatCurrency(invoice_doc.discount_amount)"
               disabled
               :prefix="currencySymbol(invoice_doc.currency)"
             ></v-text-field>
@@ -289,7 +289,7 @@
               :label="__('Grand Total')"
               background-color="white"
               hide-details
-              :value="formatCurrency(invoice_doc.grand_total)"
+              :model-value="formatCurrency(invoice_doc.grand_total)"
               disabled
               :prefix="currencySymbol(invoice_doc.currency)"
             ></v-text-field>
@@ -302,7 +302,7 @@
               :label="__('Rounded Total')"
               background-color="white"
               hide-details
-              :value="formatCurrency(invoice_doc.rounded_total)"
+              :model-value="formatCurrency(invoice_doc.rounded_total)"
               disabled
               :prefix="currencySymbol(invoice_doc.currency)"
             ></v-text-field>
@@ -565,7 +565,7 @@
                 :label="__('Available Credit')"
                 background-color="white"
                 hide-details
-                :value="formatCurrency(row.total_credit)"
+                :model-value="formatCurrency(row.total_credit)"
                 disabled
                 :prefix="currencySymbol(invoice_doc.currency)"
               ></v-text-field>

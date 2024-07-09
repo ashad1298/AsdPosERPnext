@@ -224,7 +224,7 @@
                   color="primary"
                   background-color="white"
                   hide-details
-                  :value="formatCurrency(total_selected_invoices)"
+                  :model-value="formatCurrency(total_selected_invoices)"
                   total_selected_invoices
                   readonly
                   flat
@@ -244,7 +244,7 @@
                   color="primary"
                   background-color="white"
                   hide-details
-                  :value="formatCurrency(total_selected_payments)"
+                  :model-value="formatCurrency(total_selected_payments)"
                   total_selected_payments
                   readonly
                   flat
@@ -264,7 +264,7 @@
                   color="primary"
                   background-color="white"
                   hide-details
-                  :value="formatCurrency(total_selected_mpesa_payments)"
+                  :model-value="formatCurrency(total_selected_mpesa_payments)"
                   total_selected_mpesa_payments
                   readonly
                   flat
@@ -291,7 +291,7 @@
                     color="primary"
                     background-color="white"
                     hide-details
-                    :value="formatCurrency(method.amount)"
+                    :model-value="formatCurrency(method.amount)"
                     @change="
                       setFormatedCurrency(method, 'amount', null, true, $event)
                     "
@@ -315,7 +315,7 @@
                   color="primary"
                   background-color="white"
                   hide-details
-                  :value="formatCurrency(total_of_diff)"
+                  :model-value="formatCurrency(total_of_diff)"
                   total_of_diff
                   flat
                   readonly
@@ -372,110 +372,110 @@ export default {
       mpesa_search_mobile: "",
       invoices_headers: [
         {
-          text: __("Invoice"),
+          title: __("Invoice"),
           align: "start",
           sortable: true,
-          value: "name",
+          key: "name",
         },
         {
-          text: __("Customer"),
+          title: __("Customer"),
           align: "start",
           sortable: true,
-          value: "customer_name",
+          key: "customer_name",
         },
         {
-          text: __("Date"),
+          title: __("Date"),
           align: "start",
           sortable: true,
-          value: "posting_date",
+          key: "posting_date",
         },
         {
-          text: __("Due Date"),
+          title: __("Due Date"),
           align: "start",
           sortable: true,
-          value: "due_date",
+          key: "due_date",
         },
         {
-          text: __("Total"),
+          title: __("Total"),
           align: "end",
           sortable: true,
-          value: "grand_total",
+          key: "grand_total",
         },
         {
-          text: __("Outstanding"),
+          title: __("Outstanding"),
           align: "end",
           sortable: true,
-          value: "outstanding_amount",
+          key: "outstanding_amount",
         },
       ],
       unallocated_payments_headers: [
         {
-          text: __("Payment ID"),
+          title: __("Payment ID"),
           align: "start",
           sortable: true,
-          value: "name",
+          key: "name",
         },
         {
-          text: __("Customer"),
+          title: __("Customer"),
           align: "start",
           sortable: true,
-          value: "customer_name",
+          key: "customer_name",
         },
         {
-          text: __("Date"),
+          title: __("Date"),
           align: "start",
           sortable: true,
-          value: "posting_date",
+          key: "posting_date",
         },
         {
-          text: __("Mode"),
+          title: __("Mode"),
           align: "start",
           sortable: true,
-          value: "mode_of_payment",
+          key: "mode_of_payment",
         },
         {
-          text: __("Paid"),
+          title: __("Paid"),
           align: "end",
           sortable: true,
-          value: "paid_amount",
+          key: "paid_amount",
         },
         {
-          text: __("Unallocated"),
+          title: __("Unallocated"),
           align: "end",
           sortable: true,
-          value: "unallocated_amount",
+          key: "unallocated_amount",
         },
       ],
       mpesa_payment_headers: [
         {
-          text: __("Payment ID"),
+          title: __("Payment ID"),
           align: "start",
           sortable: true,
-          value: "transid",
+          key: "transid",
         },
         {
-          text: __("Full Name"),
+          title: __("Full Name"),
           align: "start",
           sortable: true,
-          value: "full_name",
+          key: "full_name",
         },
         {
-          text: __("Nobile Number"),
+          title: __("Nobile Number"),
           align: "start",
           sortable: true,
-          value: "mobile_no",
+          key: "mobile_no",
         },
         {
-          text: __("Date"),
+          title: __("Date"),
           align: "start",
           sortable: true,
-          value: "posting_date",
+          key: "posting_date",
         },
         {
-          text: __("Amount"),
+          title: __("Amount"),
           align: "end",
           sortable: true,
-          value: "amount",
+          key: "amount",
         },
       ],
     };

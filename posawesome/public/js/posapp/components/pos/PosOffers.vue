@@ -103,10 +103,10 @@ export default {
     expanded: [],
     singleExpand: true,
     items_headers: [
-      { text: __('Name'), value: 'name', align: 'start' },
-      { text: __('Apply On'), value: 'apply_on', align: 'start' },
-      { text: __('Offer'), value: 'offer', align: 'start' },
-      { text: __('Applied'), value: 'offer_applied', align: 'start' },
+      { title: __('Name'), key: 'name', align: 'start' },
+      { title: __('Apply On'), key: 'apply_on', align: 'start' },
+      { title: __('Offer'), key: 'offer', align: 'start' },
+      { title: __('Applied'), key: 'offer_applied', align: 'start' },
     ],
   }),
 

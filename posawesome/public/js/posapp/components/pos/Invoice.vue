@@ -91,7 +91,7 @@
             :label="__('Delivery Charges Rate')"
             background-color="white"
             hide-details
-            :value="formatCurrency(delivery_charges_rate)"
+            :model-value="formatCurrency(delivery_charges_rate)"
             :prefix="currencySymbol(pos_profile.currency)"
             disabled
           ></v-text-field>
@@ -221,7 +221,7 @@
                     :label="__('QTY')"
                     background-color="white"
                     hide-details
-                    :value="formtFloat(item.qty)"
+                    :model-value="formtFloat(item.qty)"
                     @change="[setFormatedFloat(item, 'qty', null, false, $event), calc_stock_qty(item, $event)]"
                     :rules="[isNumber]"
                     :disabled="!!item.posa_is_offer || !!item.posa_is_replace"
@@ -251,7 +251,7 @@
                     background-color="white"
                     hide-details
                     :prefix="currencySymbol(pos_profile.currency)"
-                    :value="formatCurrency(item.rate)"
+                    :model-value="formatCurrency(item.rate)"
                     @change="[setFormatedCurrency(item, 'rate', null, false, $event), calc_prices(item, $event)]"
                     :rules="[isNumber]"
                     id="rate"
@@ -266,7 +266,7 @@
                     :label="__('Discount Percentage')"
                     background-color="white"
                     hide-details
-                    :value="formtFloat(item.discount_percentage)"
+                    :model-value="formtFloat(item.discount_percentage)"
                     @change="[setFormatedCurrency(item, 'discount_percentage', null, true, $event), calc_prices(item, $event)]"
                     :rules="[isNumber]"
                     id="discount_percentage"
@@ -282,7 +282,7 @@
                     :label="__('Discount Amount')"
                     background-color="white"
                     hide-details
-                    :value="formatCurrency(item.discount_amount)"
+                    :model-value="formatCurrency(item.discount_amount)"
                     :rules="[isNumber]"
                     @change="[setFormatedCurrency(item, 'discount_amount', null, false, $event), calc_prices(item, $event)]"
                     id="discount_amount"
@@ -298,7 +298,7 @@
                     :label="__('Tax Rate')"
                     background-color="white"
                     hide-details
-                    :value="formatCurrency(item.tax_rate)"
+                    :model-value="formatCurrency(item.tax_rate)"
                     @change="[setFormatedCurrency(item, 'tax_rate', null, false, $event), calc_prices(item, $event)]"
                     :rules="[isNumber]"
                     id="tax_rate"
@@ -314,7 +314,7 @@
                     :label="__('Tax Amount')"
                     background-color="white"
                     hide-details
-                    :value="formatCurrency(item.tax_amount)"
+                    :model-value="formatCurrency(item.tax_amount)"
                     :rules="[isNumber]"
                     @change="[setFormatedCurrency(item, 'tax_amount', null, false, $event), calc_prices(item, $event)]"
                     id="tax_amount"
@@ -330,7 +330,7 @@
                     :label="__('Amount')"
                     background-color="white"
                     hide-details
-                    :value="formatCurrency(flt(item.qty, float_precision) * flt(item.rate, currency_precision))"
+                    :model-value="formatCurrency(flt(item.qty, float_precision) * flt(item.rate, currency_precision))"
                     :rules="[isNumber]"
                     id="amount"
                     :prefix="currencySymbol(pos_profile.currency)"
@@ -350,7 +350,7 @@
           <v-row no-gutters class="pa-1 pt-9 pr-1">
             <v-col cols="6" class="pa-1">
               <v-text-field
-                :value="formtFloat(total_qty)"
+                :model-value="formtFloat(total_qty)"
                 :label="__('Total Qty')"
                 outlined
                 dense
@@ -365,7 +365,7 @@
               class="pa-1"
             >
               <v-text-field
-                :value="formatCurrency(discount_amount)"
+                :model-value="formatCurrency(discount_amount)"
                 @change="
                   setFormatedCurrency(
                     discount_amount,
@@ -397,7 +397,7 @@
               class="pa-1"
             >
               <v-text-field
-                :value="formtFloat(additional_discount_percentage)"
+                :model-value="formtFloat(additional_discount_percentage)"
                 @change="
                   [
                     setFormatedFloat(
@@ -428,7 +428,7 @@
             </v-col>
             <v-col cols="6" class="pa-1 mt-2">
               <v-text-field
-                :value="formatCurrency(total_items_discount_amount)"
+                :model-value="formatCurrency(total_items_discount_amount)"
                 :prefix="currencySymbol(pos_profile.currency)"
                 :label="__('Items Discounts')"
                 outlined
@@ -441,7 +441,7 @@
 
             <v-col cols="6" class="pa-1 mt-2">
               <v-text-field
-                :value="formatCurrency(subtotal)"
+                :model-value="formatCurrency(subtotal)"
                 :prefix="currencySymbol(pos_profile.currency)"
                 :label="__('Total')"
                 outlined
@@ -582,16 +582,16 @@ export default {
       posting_date: frappe.datetime.nowdate(),
       items_headers: [
         {
-          text: __("Name"),
+          title: __("Name"),
           align: "start",
           sortable: true,
-          value: "item_name",
+          key: "item_name",
         },
-        { text: __("QTY"), value: "qty", align: "center" },
-        { text: __("UOM"), value: "uom", align: "center" },
-        { text: __("Rate"), value: "rate", align: "center" },
-        { text: __("Amount"), value: "amount", align: "center" },
-        { text: __("is Offer"), value: "posa_is_offer", align: "center" },
+        { title: __("QTY"), key: "qty", align: "center" },
+        { title: __("UOM"), key: "uom", align: "center" },
+        { title: __("Rate"), key: "rate", align: "center" },
+        { title: __("Amount"), key: "amount", align: "center" },
+        { title: __("is Offer"), key: "posa_is_offer", align: "center" },
       ],
     };
   },
@@ -704,7 +704,7 @@ export default {
         if (item.has_serial_no && item.to_set_serial_no) {
           if (cur_item.serial_no_selected.includes(item.to_set_serial_no)) {
             eventBus.emit("show_mesage", {
-              text: __(`This Serial Number {0} has already been added!`, [
+              title: __(`This Serial Number {0} has already been added!`, [
                 item.to_set_serial_no,
               ]),
               color: "warning",
@@ -1166,14 +1166,14 @@ export default {
     async show_payment() {
       if (!this.customer) {
         eventBus.emit("show_mesage", {
-          text: __(`There is no Customer !`),
+          title: __(`There is no Customer !`),
           color: "error",
         });
         return;
       }
       if (!this.items.length) {
         eventBus.emit("show_mesage", {
-          text: __(`There is no Items !`),
+          title: __(`There is no Items !`),
           color: "error",
         });
         return;
@@ -1234,7 +1234,7 @@ export default {
               discount_percentage > this.pos_profile.posa_max_discount_allowed
             ) {
               eventBus.emit("show_mesage", {
-                text: __(
+                title: __(
                   `Discount percentage for item '{0}' cannot be greater than {1}%`,
                   [item.item_name, this.pos_profile.posa_max_discount_allowed]
                 ),
@@ -1251,7 +1251,7 @@ export default {
               (item.is_stock_item && item.stock_qty > item.actual_qty))
           ) {
             eventBus.emit("show_mesage", {
-              text: __(
+              title: __(
                 `The existing quantity '{0}' for item '{1}' is not enough`,
                 [item.actual_qty, item.item_name]
               ),
@@ -1262,7 +1262,7 @@ export default {
         }
         if (item.qty == 0) {
           eventBus.emit("show_mesage", {
-            text: __(`Quantity for item '{0}' cannot be Zero (0)`, [
+            title: __(`Quantity for item '{0}' cannot be Zero (0)`, [
               item.item_name,
             ]),
             color: "error",
@@ -1274,7 +1274,7 @@ export default {
           item.discount_percentage > item.max_discount
         ) {
           eventBus.emit("show_mesage", {
-            text: __(`Maximum discount for Item {0} is {1}%`, [
+            title: __(`Maximum discount for Item {0} is {1}%`, [
               item.item_name,
               item.max_discount,
             ]),
@@ -1289,7 +1289,7 @@ export default {
               item.stock_qty != item.serial_no_selected.length)
           ) {
             eventBus.emit("show_mesage", {
-              text: __(`Selected serial numbers of item {0} is incorrect`, [
+              title: __(`Selected serial numbers of item {0} is incorrect`, [
                 item.item_name,
               ]),
               color: "error",
@@ -1300,7 +1300,7 @@ export default {
         if (item.has_batch_no) {
           if (item.stock_qty > item.actual_batch_qty) {
             eventBus.emit("show_mesage", {
-              text: __(
+              title: __(
                 `The existing batch quantity of item {0} is not enough`,
                 [item.item_name]
               ),
@@ -1313,7 +1313,7 @@ export default {
           const clac_percentage = (this.discount_amount / this.Total) * 100;
           if (clac_percentage > this.pos_profile.posa_max_discount_allowed) {
             eventBus.emit("show_mesage", {
-              text: __(`The discount should not be higher than {0}%`, [
+              title: __(`The discount should not be higher than {0}%`, [
                 this.pos_profile.posa_max_discount_allowed,
               ]),
               color: "error",
@@ -1324,7 +1324,7 @@ export default {
         if (this.invoice_doc.is_return) {
           if (this.subtotal >= 0) {
             eventBus.emit("show_mesage", {
-              text: __(`Return Invoice Total Not Correct`),
+              title: __(`Return Invoice Total Not Correct`),
               color: "error",
             });
             value = false;
@@ -1332,7 +1332,7 @@ export default {
           }
           if (Math.abs(this.subtotal) > Math.abs(this.return_doc.total)) {
             eventBus.emit("show_mesage", {
-              text: __(`Return Invoice Total should not be higher than {0}`, [
+              title: __(`Return Invoice Total should not be higher than {0}`, [
                 this.return_doc.total,
               ]),
               color: "error",
@@ -1347,7 +1347,7 @@ export default {
 
             if (!return_item) {
               eventBus.emit("show_mesage", {
-                text: __(
+                title: __(
                   `The item {0} cannot be returned because it is not in the invoice {1}`,
                   [item.item_name, this.return_doc.name]
                 ),
@@ -1360,7 +1360,7 @@ export default {
               Math.abs(item.qty) == 0
             ) {
               eventBus.emit("show_mesage", {
-                text: __(`The QTY of the item {0} cannot be greater than {1}`, [
+                title: __(`The QTY of the item {0} cannot be greater than {1}`, [
                   item.item_name,
                   return_item.qty,
                 ]),
@@ -2318,7 +2318,7 @@ export default {
       }
       if (offer.offer === "Loyalty Point") {
         eventBus.emit("show_mesage", {
-          text: __("Loyalty Point Offer Applied"),
+          title: __("Loyalty Point Offer Applied"),
           color: "success",
         });
       }
@@ -2539,7 +2539,7 @@ export default {
     print_draft_invoice() {
       if (!this.pos_profile.posa_allow_print_draft_invoices) {
         eventBus.emit("show_mesage", {
-          text: __(`You are not allowed to print draft invoices`),
+          title: __(`You are not allowed to print draft invoices`),
           color: "error",
         });
         return;
