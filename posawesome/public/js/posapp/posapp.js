@@ -1,21 +1,16 @@
-import { createApp, h } from 'vue';
+import { createApp } from 'vue';
 import { createVuetify } from 'vuetify';
 import Home from './Home.vue';
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
 
 frappe.provide('frappe.PosApp');
-
-const translationPlugin = {
-    install(app) {
-      app.config.globalProperties.__ = window.__;
-    }
-  };
 
 frappe.PosApp.posapp = class {
     constructor({ parent }) {
         this.$parent = $(document);
         this.page = parent.page;
         this.make_body();
-
     }
 
     make_body () {
@@ -39,14 +34,19 @@ frappe.PosApp.posapp = class {
                     },
                 },
             },
+            components,
+            directives
         });
 
-        const app = createApp({
-            render: () => h(Home),
-        });
+        const app = createApp(Home);
 
         app.use(vuetify);
-        app.use(translationPlugin);
+        app.use({
+            install(app) {
+              app.config.globalProperties.frappe = window.frappe;
+              app.config.globalProperties.__ = window.__;
+            }
+          });
 
         // Ensure that the main-section exists before mounting
         const mainSection = this.$parent.find('.main-section')[0];
@@ -56,8 +56,5 @@ frappe.PosApp.posapp = class {
             console.error('main-section not found');
         }
     }
-
-    setup_header () {
-        
-    }
+    setup_header () {}
 };
