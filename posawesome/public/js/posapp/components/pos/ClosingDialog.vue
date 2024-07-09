@@ -11,7 +11,6 @@
           <v-container>
             <v-row>
               <v-col cols="12" class="pa-1">
-                <template>
                   <v-data-table
                     :headers="headers"
                     :items="dialog_data.payment_reconciliation"
@@ -25,7 +24,7 @@
                         :return-value.sync="props.item.closing_amount"
                       >
                         {{ currencySymbol(pos_profile.currency) }}
-                        {{ formtCurrency(props.item.closing_amount) }}
+                        {{ formatCurrency(props.item.closing_amount) }}
                         <template v-slot:input>
                           <v-text-field
                             v-model="props.item.closing_amount"
@@ -41,21 +40,20 @@
                     <template v-slot:item.difference="{ item }">
                       {{ currencySymbol(pos_profile.currency) }}
                       {{
-                        (item.difference = formtCurrency(
+                        (item.difference = formatCurrency(
                           item.expected_amount - item.closing_amount
                         ))
                       }}</template
                     >
                     <template v-slot:item.opening_amount="{ item }">
                       {{ currencySymbol(pos_profile.currency) }}
-                      {{ formtCurrency(item.opening_amount) }}</template
+                      {{ formatCurrency(item.opening_amount) }}</template
                     >
                     <template v-slot:item.expected_amount="{ item }">
                       {{ currencySymbol(pos_profile.currency) }}
-                      {{ formtCurrency(item.expected_amount) }}</template
+                      {{ formatCurrency(item.expected_amount) }}</template
                     >
                   </v-data-table>
-                </template>
               </v-col>
             </v-row>
           </v-container>

@@ -30,7 +30,6 @@
           </v-row>
           <v-row>
             <v-col cols="12" class="pa-1" v-if="dialog_data">
-              <template>
                 <v-data-table
                   :headers="headers"
                   :items="dialog_data"
@@ -42,10 +41,9 @@
                 >
                   <template v-slot:item.grand_total="{ item }">
                     {{ currencySymbol(item.currency) }}
-                    {{ formtCurrency(item.grand_total) }}</template
+                    {{ formatCurrency(item.grand_total) }}</template
                   >
                 </v-data-table>
-              </template>
             </v-col>
           </v-row>
         </v-container>

@@ -84,7 +84,7 @@
                   <v-card-text class="text--primary pa-1">
                     <div class="text-caption primary--text">
                       {{ currencySymbol(item.currency) || "" }}
-                      {{ formtCurrency(item.rate) || 0 }}
+                      {{ formatCurrency(item.rate) || 0 }}
                     </div>
                     <div class="text-caption golden--text">
                       {{ formtFloat(item.actual_qty) || 0 }}
@@ -97,7 +97,6 @@
           </div>
           <div fluid class="items" v-if="items_view == 'list'">
             <div class="my-0 py-0 overflow-y-auto" style="max-height: 65vh">
-              <template>
                 <v-data-table
                   :headers="getItmesHeaders()"
                   :items="filtred_items"
@@ -110,7 +109,7 @@
                   <template v-slot:item.rate="{ item }">
                     <span class="primary--text"
                       >{{ currencySymbol(item.currency) }}
-                      {{ formtCurrency(item.rate) }}</span
+                      {{ formatCurrency(item.rate) }}</span
                     >
                   </template>
                   <template v-slot:item.actual_qty="{ item }">
@@ -119,7 +118,6 @@
                     }}</span>
                   </template>
                 </v-data-table>
-              </template>
             </div>
           </div>
         </v-col>

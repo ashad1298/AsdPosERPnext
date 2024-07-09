@@ -98,7 +98,7 @@ export default {
     close_dialog() {
       this.varaintsDialog = false;
     },
-    formtCurrency(value) {
+    formatCurrency(value) {
       value = parseFloat(value);
       return value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
     },

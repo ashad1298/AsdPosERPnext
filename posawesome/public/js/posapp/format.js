@@ -15,7 +15,7 @@ export default {
             }
             return flt(value, precision, number_format, rounding_method);
         },
-        formtCurrency (value, precision) {
+        formatCurrency (value, precision) {
             const format = get_number_format(this.pos_profile?.currency);
             value = format_number(
                 value,
@@ -40,7 +40,7 @@ export default {
                 if (no_negative && value < 0) {
                     value = value * -1;
                 }
-                value = this.formtCurrency($event, precision);
+                value = this.formatCurrency($event, precision);
             } catch (e) {
                 console.error(e);
                 value = 0;

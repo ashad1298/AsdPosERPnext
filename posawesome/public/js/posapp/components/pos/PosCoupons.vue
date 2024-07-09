@@ -33,7 +33,6 @@
         </v-row>
       </v-card-title>
       <div class="my-0 py-0 overflow-y-auto" style="max-height: 75vh">
-        <template @mouseover="style = 'cursor: pointer'">
           <v-data-table
             :headers="items_headers"
             :items="posa_coupons"
@@ -43,6 +42,7 @@
             class="elevation-1"
             :items-per-page="itemsPerPage"
             hide-default-footer
+            @mouseover="style = 'cursor: pointer'"
           >
             <template v-slot:item.applied="{ item }">
               <v-simple-checkbox
@@ -51,7 +51,6 @@
               ></v-simple-checkbox>
             </template>
           </v-data-table>
-        </template>
       </div>
     </v-card>
 

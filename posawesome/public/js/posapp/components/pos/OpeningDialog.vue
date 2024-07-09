@@ -6,9 +6,7 @@
       </template>-->
       <v-card>
         <v-card-title>
-          <span class="headline primary--text">{{
-            __('Create POS Opening Shift')
-          }}</span>
+          <span class="headline primary--text">{{ __('Create POS Opening Shift') }}</span>
         </v-card-title>
         <v-card-text>
           <v-container>
@@ -30,7 +28,6 @@
                 ></v-autocomplete>
               </v-col>
               <v-col cols="12">
-                <template>
                 <v-data-table
                   :headers="payments_methods_headers"
                   :items="payments_methods"
@@ -38,25 +35,9 @@
                   class="elevation-1"
                   :items-per-page="itemsPerPage"
                   hide-default-footer
-                >
-                    <template v-slot:item.amount="props">
-                      <v-edit-dialog :return-value.sync="props.item.amount">
-                        {{ currencySymbol(props.item.currency) }}
-                        {{ formtCurrency(props.item.amount) }}
-                        <template v-slot:input>
-                          <v-text-field
-                            v-model="props.item.amount"
-                            :rules="[max25chars]"
-                            :label="__('Edit')"
-                            single-line
-                            counter
-                            type="number"
-                          ></v-text-field>
-                        </template>
-                    </v-edit-dialog>
-                  </template>
+                > 
+                  
                 </v-data-table>
-                </template>
               </v-col>
             </v-row>
           </v-container>
@@ -69,8 +50,9 @@
             :disabled="is_loading"
             dark
             @click="submit_dialog"
-            >Submit</v-btn
           >
+            Submit
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -78,121 +60,106 @@
 </template>
 
 <script>
+import { ref, onMounted } from 'vue';
 import { eventBus } from '../../bus';
 import format from '../../format';
+
 export default {
   mixins: [format],
   props: ['dialog'],
-  data() {
-    return {
-      isOpen: this.dialog ? this.dialog : false,
-      dialog_data: {},
-      is_loading: false,
-      companies: [],
-      company: '',
-      pos_profiles: [],
-      pos_profile: '',
-      payments_methods: [],
-      payments_methods_headers: [
-        {
-          text: __('Mode of Payment'),
-          align: 'start',
-          sortable: false,
-          value: 'mode_of_payment',
-        },
-        {
-          text: __('Opening Amount'),
-          value: 'amount',
-          align: 'center',
-          sortable: false,
-        },
-      ],
-      itemsPerPage: 100,
-      max25chars: (v) => v.length <= 12 || 'Input too long!', // TODO : should validate as number
-      pagination: {},
-      snack: false, // TODO : need to remove
-      snackColor: '', // TODO : need to remove
-      snackText: '', // TODO : need to remove
-    };
-  },
-  watch: {
-    company(val) {
-      this.pos_profiles = [];
-      this.pos_profiles_data.forEach((element) => {
-        if (element.company === val) {
-          this.pos_profiles.push(element.name);
-        }
-      if (this.pos_profiles.length) {
-        this.pos_profile = this.pos_profiles[0];
-      } else {
-        this.pos_profile = '';
-      }
-      });
-    },
-    pos_profile(val) {
-      this.payments_methods = [];
-      this.payments_method_data.forEach((element) => {
-        if (element.parent === val) {
-          this.payments_methods.push({
-          mode_of_payment: element.mode_of_payment,
-          amount: 0,
-          currency: element.currency,
-          });
-        }
-      });
-    },
-  },
-  methods: {
-    close_opening_dialog() {
+  setup(props) {
+    const isOpen = ref(props.dialog ?? false);
+    const companies = ref([]);
+    const  is_loading = ref(false);
+    const company = ref('');
+    const pos_profiles = ref([]);
+    const pos_profile = ref('');
+    const payments_methods = ref([]);
+    const payments_methods_headers = ref([
+      {
+        title: __('Mode of Payment'),
+        align: 'start',
+        sortable: true,
+        key: 'mode_of_payment',
+      },
+      {
+        title: __('Opening Amount'),
+        key: 'amount',
+        align: 'center',
+        sortable: false,
+      },
+    ]);
+    const itemsPerPage = 100;
+
+    const max25chars = (v) => v.length <= 12 || 'Input too long!';
+
+    const close_opening_dialog = () => {
       eventBus.emit('close_opening_dialog');
-    },
-    get_opening_dialog_data() {
-      const vm = this;
+    };
+
+    const get_opening_dialog_data = () => {
       frappe.call({
         method: 'posawesome.posawesome.api.posapp.get_opening_dialog_data',
         args: {},
-        callback: function (r) {
+        callback: (r) => {
           if (r.message) {
-            r.message.companies.forEach((element) => {
-              vm.companies.push(element.name);
-            });
-            vm.company = vm.companies[0];
-            vm.pos_profiles_data = r.message.pos_profiles_data;
-            vm.payments_method_data = r.message.payments_method;
+            companies.value = r.message.companies.map((element) => element.name);
+            company.value = companies.value[0];
+            pos_profiles.value = r.message.pos_profiles_data.map((element) => element.name);
+            payments_methods.value = r.message.payments_method.map((element) => ({
+              mode_of_payment: element.mode_of_payment,
+              amount: 0,
+              currency: element.currency,
+            }));
           }
         },
       });
-    },
-    submit_dialog() {
-      if (!this.payments_methods.length || !this.company || !this.pos_profile) {
+    };
+
+    const submit_dialog = () => {
+      if (!payments_methods.value.length || !company.value || !pos_profile.value) {
         return;
       }
-      this.is_loading = true;
-      const vm = this;
-      return frappe
+      is_loading.value = true;
+      frappe
         .call('posawesome.posawesome.api.posapp.create_opening_voucher', {
-          pos_profile: this.pos_profile,
-          company: this.company,
-          balance_details: this.payments_methods,
+          pos_profile: pos_profile.value,
+          company: company.value,
+          balance_details: payments_methods.value,
         })
         .then((r) => {
           if (r.message) {
             eventBus.emit('register_pos_data', r.message);
             eventBus.emit('set_company', r.message.company);
-            vm.close_opening_dialog();
-            is_loading = false;
+            close_opening_dialog();
+            is_loading.value = false;
           }
         });
-    },
-    go_desk() {
+    };
+
+    const go_desk = () => {
       frappe.set_route('/');
       location.reload();
-    },
-  },
-  created: function () {
-    this.$nextTick(function () {
-      this.get_opening_dialog_data();
+    };
+
+    onMounted(() => {
+      get_opening_dialog_data();
     });
+
+    return {
+      isOpen,
+      companies,
+      company,
+      pos_profiles,
+      pos_profile,
+      payments_methods,
+      payments_methods_headers,
+      itemsPerPage,
+      max25chars,
+      is_loading,
+      submit_dialog,
+      go_desk,
+    };
   },
 };
 </script>

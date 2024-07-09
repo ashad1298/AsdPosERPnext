@@ -8,7 +8,6 @@
         <span class="text-h6 primary--text">{{ __('Offers') }}</span>
       </v-card-title>
       <div class="my-0 py-0 overflow-y-auto" style="max-height: 75vh">
-        <template @mouseover="style = 'cursor: pointer'">
           <v-data-table
             :headers="items_headers"
             :items="pos_offers"
@@ -19,6 +18,7 @@
             class="elevation-1"
             :items-per-page="itemsPerPage"
             hide-default-footer
+            @mouseover="style = 'cursor: pointer'"
           >
             <template v-slot:item.offer_applied="{ item }">
               <v-simple-checkbox
@@ -63,7 +63,6 @@
               </td>
             </template>
           </v-data-table>
-        </template>
       </div>
     </v-card>
 

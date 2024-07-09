@@ -27,8 +27,8 @@
         </v-btn>
       <div class="text-center">
         <v-menu offset-y>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark text v-bind="attrs" v-on="on"
+          <template #activator="{ on, props }">
+            <v-btn color="primary" dark text v-bind="props" v-on="on"
               >Menu</v-btn
             >
           </template>

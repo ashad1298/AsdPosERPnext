@@ -20,7 +20,7 @@
               :label="__('Paid Amount')"
               background-color="white"
               hide-details
-              :value="formtCurrency(total_payments)"
+              :value="formatCurrency(total_payments)"
               readonly
               :prefix="currencySymbol(invoice_doc.currency)"
               dense
@@ -33,7 +33,7 @@
               :label="__(diff_lable)"
               background-color="white"
               hide-details
-              :value="formtCurrency(diff_payment)"
+              :value="formatCurrency(diff_payment)"
               readonly
               :prefix="currencySymbol(invoice_doc.currency)"
               dense
@@ -63,7 +63,7 @@
               :label="__('Credit Change')"
               background-color="white"
               hide-details
-              :value="formtCurrency(credit_change)"
+              :value="formatCurrency(credit_change)"
               readonly
               :prefix="currencySymbol(invoice_doc.currency)"
               dense
@@ -86,7 +86,7 @@
                 :label="__(payment.mode_of_payment)"
                 background-color="white"
                 hide-details
-                :value="formtCurrency(payment.amount)"
+                :value="formatCurrency(payment.amount)"
                 @change="
                   setFormatedCurrency(payment, 'amount', null, true, $event)
                 "
@@ -220,7 +220,7 @@
               :label="__('You can redeem credit upto')"
               background-color="white"
               hide-details
-              :value="formtCurrency(available_customer_credit)"
+              :value="formatCurrency(available_customer_credit)"
               :prefix="currencySymbol(invoice_doc.currency)"
               disabled
             ></v-text-field>
@@ -237,7 +237,7 @@
               :label="__('Net Total')"
               background-color="white"
               hide-details
-              :value="formtCurrency(invoice_doc.net_total)"
+              :value="formatCurrency(invoice_doc.net_total)"
               disabled
               :prefix="currencySymbol(invoice_doc.currency)"
             ></v-text-field>
@@ -250,7 +250,7 @@
               :label="__('Tax and Charges')"
               background-color="white"
               hide-details
-              :value="formtCurrency(invoice_doc.total_taxes_and_charges)"
+              :value="formatCurrency(invoice_doc.total_taxes_and_charges)"
               disabled
               :prefix="currencySymbol(invoice_doc.currency)"
             ></v-text-field>
@@ -263,7 +263,7 @@
               :label="__('Total Amount')"
               background-color="white"
               hide-details
-              :value="formtCurrency(invoice_doc.total)"
+              :value="formatCurrency(invoice_doc.total)"
               disabled
               :prefix="currencySymbol(invoice_doc.currency)"
             ></v-text-field>
@@ -276,7 +276,7 @@
               :label="__('Discount Amount')"
               background-color="white"
               hide-details
-              :value="formtCurrency(invoice_doc.discount_amount)"
+              :value="formatCurrency(invoice_doc.discount_amount)"
               disabled
               :prefix="currencySymbol(invoice_doc.currency)"
             ></v-text-field>
@@ -289,7 +289,7 @@
               :label="__('Grand Total')"
               background-color="white"
               hide-details
-              :value="formtCurrency(invoice_doc.grand_total)"
+              :value="formatCurrency(invoice_doc.grand_total)"
               disabled
               :prefix="currencySymbol(invoice_doc.currency)"
             ></v-text-field>
@@ -302,7 +302,7 @@
               :label="__('Rounded Total')"
               background-color="white"
               hide-details
-              :value="formtCurrency(invoice_doc.rounded_total)"
+              :value="formatCurrency(invoice_doc.rounded_total)"
               disabled
               :prefix="currencySymbol(invoice_doc.currency)"
             ></v-text-field>
@@ -318,7 +318,7 @@
               transition="scale-transition"
               dense
             >
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ on, props }">
                 <v-text-field
                   v-model="invoice_doc.posa_delivery_date"
                   :label="__('Delivery Date')"
@@ -329,7 +329,7 @@
                   clearable
                   color="primary"
                   hide-details
-                  v-bind="attrs"
+                  v-bind="props"
                   v-on="on"
                 ></v-text-field>
               </template>
@@ -437,7 +437,7 @@
                 :close-on-content-click="false"
                 transition="scale-transition"
               >
-                <template v-slot:activator="{ on, attrs }">
+                <template v-slot:activator="{ on, props }">
                   <v-text-field
                     v-model="invoice_doc.po_date"
                     :label="__('Purchase Order Date')"
@@ -445,7 +445,7 @@
                     outlined
                     dense
                     hide-details
-                    v-bind="attrs"
+                    v-bind="props"
                     v-on="on"
                     color="primary"
                   ></v-text-field>
@@ -508,7 +508,7 @@
               :close-on-content-click="false"
               transition="scale-transition"
             >
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ on, props }">
                 <v-text-field
                   v-model="invoice_doc.due_date"
                   :label="__('Due Date')"
@@ -516,7 +516,7 @@
                   outlined
                   dense
                   hide-details
-                  v-bind="attrs"
+                  v-bind="props"
                   v-on="on"
                   color="primary"
                 ></v-text-field>
@@ -565,7 +565,7 @@
                 :label="__('Available Credit')"
                 background-color="white"
                 hide-details
-                :value="formtCurrency(row.total_credit)"
+                :value="formatCurrency(row.total_credit)"
                 disabled
                 :prefix="currencySymbol(invoice_doc.currency)"
               ></v-text-field>
@@ -1172,7 +1172,7 @@ export default {
                       eventBus.emit("unfreeze");
                       eventBus.emit("show_mesage", {
                         text: __("Payment of {0} received successfully.", [
-                          vm.formtCurrency(
+                          vm.formatCurrency(
                             message.grand_total,
                             vm.invoice_doc.currency,
                             0

@@ -83,7 +83,7 @@
                   transition="scale-transition"
                   dense
                 >
-                  <template v-slot:activator="{ on, attrs }">
+                  <template v-slot:activator="{ on, props }">
                     <v-text-field
                       v-model="birthday"
                       :label="__('Birthday')"
@@ -91,7 +91,7 @@
                       dense
                       clearable
                       hide-details
-                      v-bind="attrs"
+                      v-bind="props"
                       v-on="on"
                       color="primary"
                     ></v-text-field>

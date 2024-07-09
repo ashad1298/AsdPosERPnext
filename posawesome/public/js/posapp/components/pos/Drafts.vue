@@ -14,7 +14,6 @@
           <v-container>
             <v-row no-gutters>
               <v-col cols="12" class="pa-1">
-                <template>
                 <v-data-table
                   :headers="headers"
                     :items="dialog_data"
@@ -29,10 +28,9 @@
                   </template>
                   <template v-slot:item.grand_total="{ item }">
                       {{ currencySymbol(item.currency) }}
-                      {{ formtCurrency(item.grand_total) }}
+                      {{ formatCurrency(item.grand_total) }}
                   </template>
                 </v-data-table>
-                </template>
               </v-col>
             </v-row>
           </v-container>

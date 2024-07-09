@@ -16,7 +16,7 @@
                   <span v-if="total_outstanding_amount" class="primary--text"
                     >{{ __("- Total Outstanding") }} :
                     {{ currencySymbol(pos_profile.currency) }}
-                    {{ formtCurrency(total_outstanding_amount) }}</span
+                    {{ formatCurrency(total_outstanding_amount) }}</span
                   >
                 </p>
               </v-col>
@@ -25,7 +25,7 @@
                   <span>{{ __("Total Selected :") }}</span>
                   <span>
                     {{ currencySymbol(pos_profile.currency) }}
-                    {{ formtCurrency(total_selected_invoices) }}
+                    {{ formatCurrency(total_selected_invoices) }}
                   </span>
                 </p>
               </v-col>
@@ -68,12 +68,12 @@
             >
               <template v-slot:item.grand_total="{ item }">
                 {{ currencySymbol(item.currency) }}
-                {{ formtCurrency(item.grand_total) }}
+                {{ formatCurrency(item.grand_total) }}
               </template>
               <template v-slot:item.outstanding_amount="{ item }">
                 <span class="primary--text"
                   >{{ currencySymbol(item.currency) }}
-                  {{ formtCurrency(item.outstanding_amount) }}</span
+                  {{ formatCurrency(item.outstanding_amount) }}</span
                 >
               </template>
             </v-data-table>
@@ -92,7 +92,7 @@
                   <span v-if="total_unallocated_amount" class="primary--text">
                     {{ __("- Total Unallocated") }} :
                     {{ currencySymbol(pos_profile.currency) }}
-                    {{ formtCurrency(total_unallocated_amount) }}
+                    {{ formatCurrency(total_unallocated_amount) }}
                   </span>
                 </p>
               </v-col>
@@ -101,7 +101,7 @@
                   <span>{{ __("Total Selected :") }}</span>
                   <span>
                     {{ currencySymbol(pos_profile.currency) }}
-                    {{ formtCurrency(total_selected_payments) }}
+                    {{ formatCurrency(total_selected_payments) }}
                   </span>
                 </p>
               </v-col>
@@ -119,12 +119,12 @@
             >
               <template v-slot:item.paid_amount="{ item }">
                 {{ currencySymbol(item.currency) }}
-                {{ formtCurrency(item.paid_amount) }}
+                {{ formatCurrency(item.paid_amount) }}
               </template>
               <template v-slot:item.unallocated_amount="{ item }">
                 <span class="primary--text"
                   >{{ currencySymbol(item.currency) }}
-                  {{ formtCurrency(item.unallocated_amount) }}</span
+                  {{ formatCurrency(item.unallocated_amount) }}</span
                 >
               </template>
             </v-data-table>
@@ -144,7 +144,7 @@
                   <span>{{ __("Total Selected :") }}</span>
                   <span>
                     {{ currencySymbol(pos_profile.currency) }}
-                    {{ formtCurrency(total_selected_mpesa_payments) }}
+                    {{ formatCurrency(total_selected_mpesa_payments) }}
                   </span>
                 </p>
               </v-col>
@@ -199,7 +199,7 @@
               <template v-slot:item.amount="{ item }">
                 <span class="primary--text">
                   {{ currencySymbol(item.currency) }}
-                  {{ formtCurrency(item.amount) }}
+                  {{ formatCurrency(item.amount) }}
                 </span>
               </template>
             </v-data-table>
@@ -224,7 +224,7 @@
                   color="primary"
                   background-color="white"
                   hide-details
-                  :value="formtCurrency(total_selected_invoices)"
+                  :value="formatCurrency(total_selected_invoices)"
                   total_selected_invoices
                   readonly
                   flat
@@ -244,7 +244,7 @@
                   color="primary"
                   background-color="white"
                   hide-details
-                  :value="formtCurrency(total_selected_payments)"
+                  :value="formatCurrency(total_selected_payments)"
                   total_selected_payments
                   readonly
                   flat
@@ -264,7 +264,7 @@
                   color="primary"
                   background-color="white"
                   hide-details
-                  :value="formtCurrency(total_selected_mpesa_payments)"
+                  :value="formatCurrency(total_selected_mpesa_payments)"
                   total_selected_mpesa_payments
                   readonly
                   flat
@@ -291,7 +291,7 @@
                     color="primary"
                     background-color="white"
                     hide-details
-                    :value="formtCurrency(method.amount)"
+                    :value="formatCurrency(method.amount)"
                     @change="
                       setFormatedCurrency(method, 'amount', null, true, $event)
                     "
@@ -315,7 +315,7 @@
                   color="primary"
                   background-color="white"
                   hide-details
-                  :value="formtCurrency(total_of_diff)"
+                  :value="formatCurrency(total_of_diff)"
                   total_of_diff
                   flat
                   readonly

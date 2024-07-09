@@ -33,7 +33,6 @@
           </v-row>
           <v-row>
             <v-col cols="12" class="pa-1" v-if="dialog_data">
-              <template>
                 <v-data-table
                   :headers="headers"
                   :items="dialog_data"
@@ -44,13 +43,12 @@
                   v-model="selected"
                 >
                   <template v-slot:item.amount="{ item }">{{
-                    formtCurrency(item.amount)
+                    formatCurrency(item.amount)
                   }}</template>
                   <template v-slot:item.posting_date="{ item }">{{
                     item.posting_date.slice(0, 16)
                   }}</template>
                 </v-data-table>
-              </template>
             </v-col>
           </v-row>
         </v-container>
@@ -158,7 +156,7 @@ export default {
         });
       }
     },
-    formtCurrency(value) {
+    formatCurrency(value) {
       value = parseFloat(value);
       return value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
     },
