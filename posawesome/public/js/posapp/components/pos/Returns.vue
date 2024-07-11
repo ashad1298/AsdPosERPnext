@@ -4,7 +4,7 @@
       <v-card>
         <v-card-title>
           <span class="headline primary--text">{{
-            __('Select Return Invoice')
+            __("Select Return Invoice")
           }}</span>
         </v-card-title>
         <v-container>
@@ -25,25 +25,25 @@
               color="primary"
               dark
               @click="search_invoices"
-              >{{ __('Search') }}</v-btn
+              >{{ __("Search") }}</v-btn
             >
           </v-row>
           <v-row>
             <v-col cols="12" class="pa-1" v-if="dialog_data">
-                <v-data-table
-                  :headers="headers"
-                  :items="dialog_data"
-                  item-key="name"
-                  class="elevation-1"
-                  :single-select="singleSelect"
-                  show-select
-                  v-model="selected"
+              <v-data-table
+                :headers="headers"
+                :items="dialog_data"
+                item-key="name"
+                class="elevation-1"
+                :single-select="singleSelect"
+                show-select
+                v-model="selected"
+              >
+                <template v-slot:item.grand_total="{ item }">
+                  {{ currencySymbol(item.currency) }}
+                  {{ formatCurrency(item.grand_total) }}</template
                 >
-                  <template v-slot:item.grand_total="{ item }">
-                    {{ currencySymbol(item.currency) }}
-                    {{ formatCurrency(item.grand_total) }}</template
-                  >
-                </v-data-table>
+              </v-data-table>
             </v-col>
           </v-row>
         </v-container>
@@ -55,7 +55,7 @@
             color="success"
             dark
             @click="submit_dialog"
-            >{{ __('Select') }}</v-btn
+            >{{ __("Select") }}</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -64,40 +64,40 @@
 </template>
 
 <script>
-import { eventBus } from '../../bus';
-import format from '../../format';
+import { eventBus } from "../../bus";
+import format from "../../format";
 export default {
   mixins: [format],
   data: () => ({
     invoicesDialog: false,
     singleSelect: true,
     selected: [],
-    dialog_data: '',
-    company: '',
-    invoice_name: '',
+    dialog_data: "",
+    company: "",
+    invoice_name: "",
     headers: [
       {
-        title: __('Customer'),
-        key: 'customer',
-        align: 'start',
+        title: __("Customer"),
+        key: "customer",
+        align: "start",
         sortable: true,
       },
       {
-        title: __('Date'),
-        align: 'start',
+        title: __("Date"),
+        align: "start",
         sortable: true,
-        key: 'posting_date',
+        key: "posting_date",
       },
       {
-        title: __('Invoice'),
-        key: 'name',
-        align: 'start',
+        title: __("Invoice"),
+        key: "name",
+        align: "start",
         sortable: true,
       },
       {
-        title: __('Amount'),
-        key: 'grand_total',
-        align: 'end',
+        title: __("Amount"),
+        key: "grand_total",
+        align: "end",
         sortable: false,
       },
     ],
@@ -115,7 +115,7 @@ export default {
     search_invoices() {
       const vm = this;
       frappe.call({
-        method: 'posawesome.posawesome.api.posapp.search_invoices_for_return',
+        method: "posawesome.posawesome.api.posapp.search_invoices_for_return",
         args: {
           invoice_name: vm.invoice_name,
           company: vm.company,
@@ -145,17 +145,17 @@ export default {
         invoice_doc.return_against = return_doc.name;
         invoice_doc.customer = return_doc.customer;
         const data = { invoice_doc, return_doc };
-        eventBus.emit('load_return_invoice', data);
+        eventBus.emit("load_return_invoice", data);
         this.invoicesDialog = false;
       }
     },
   },
   created: function () {
-    eventBus.on('open_returns', (data) => {
+    eventBus.on("open_returns", (data) => {
       this.invoicesDialog = true;
       this.company = data;
-      this.invoice_name = '';
-      this.dialog_data = '';
+      this.invoice_name = "";
+      this.dialog_data = "";
       this.selected = [];
     });
   },

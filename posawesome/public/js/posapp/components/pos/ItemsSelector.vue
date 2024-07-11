@@ -133,12 +133,12 @@
             </v-btn>
           </v-btn-toggle>
         </v-col>
-        <v-col cols="4">
+        <v-col cols="3">
           <v-btn elevation="0" color="primary" text block @click="show_coupons"
             >{{ couponsCount }} {{ __("Coupons") }}</v-btn
           >
         </v-col>
-        <v-col cols="4">
+        <v-col cols="5">
           <v-btn elevation="0" color="primary" text block @click="show_offers"
             >{{ offersCount }} {{ __("Offers") }} : {{ appliedOffersCount }}
             {{ __("Applied") }}</v-btn

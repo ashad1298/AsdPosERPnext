@@ -1,602 +1,567 @@
 <template>
-  <div>
-    <v-dialog v-model="cancel_dialog" max-width="330">
-      <v-card>
-        <v-card-title>
-          {{ __("Cancel Current Invoice ?") }}
-        </v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="error" @click="cancel_invoice">
-            {{ __("Cancel") }}
-          </v-btn>
-          <v-btn color="warning" @click="cancel_dialog = false">
-            {{ __("Back") }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-card style="max-height: 70vh; height: 70vh">
-      <v-row align="center" class="items px-2 py-1">
-        <v-col
-          v-if="pos_profile.posa_allow_sales_order"
-          cols="9"
-          class="pb-2 pr-0"
-        >
-          <Customer />
-        </v-col>
-        <v-col v-else cols="12" class="pb-2">
-          <Customer />
-        </v-col>
-        <v-col v-if="pos_profile.posa_allow_sales_order" cols="3" class="pb-2">
-          <v-select
-            dense
-            hide-details
-            outlined
-            color="primary"
-            background-color="white"
-            :items="invoiceTypes"
-            :label="__('Type')"
-            v-model="invoiceType"
-            :disabled="invoiceType == 'Return'"
-          ></v-select>
-        </v-col>
-      </v-row>
-
-      <v-row
-        align="center"
-        class="items px-2 py-1 mt-0 pt-0"
-        v-if="pos_profile.posa_use_delivery_charges"
-      >
-        <v-col cols="8" class="pb-0 mb-0 pr-0 pt-0">
-          <v-autocomplete
-            dense
-            clearable
-            auto-select-first
-            outlined
-            color="primary"
-            :label="__('Delivery Charges')"
-            v-model="selcted_delivery_charges"
-            :items="delivery_charges"
-            item-text="name"
-            return-object
-            background-color="white"
-            :no-data-text="__('Charges not found')"
-            hide-details
-            :filter="deliveryChargesFilter"
-            :disabled="readonly"
-            @change="update_delivery_charges"
-          >
-            <template #item="{ item }">
-              <v-list-item>
-                <v-list-item-title
-                  class="primary--text subtitle-1"
-                  v-html="item.name"
-                ></v-list-item-title>
-                <v-list-item-subtitle
-                  v-html="`Rate: ${item.rate}`"
-                ></v-list-item-subtitle>
-              </v-list-item>
-            </template>
-          </v-autocomplete>
-        </v-col>
-        <v-col cols="4" class="pb-0 mb-0 pt-0">
-          <v-text-field
-            dense
-            outlined
-            color="primary"
-            :label="__('Delivery Charges Rate')"
-            background-color="white"
-            hide-details
-            :model-value="formatCurrency(delivery_charges_rate)"
-            :prefix="currencySymbol(pos_profile.currency)"
-            disabled
-          ></v-text-field>
-        </v-col>
-      </v-row>
-      <v-row
-        align="center"
-        class="items px-2 py-1 mt-0 pt-0"
-        v-if="pos_profile.posa_allow_change_posting_date"
-      >
-        <v-col cols="4" class="pb-2">
-          <v-menu
-            ref="invoice_posting_date"
-            v-model="invoice_posting_date"
-            :close-on-content-click="false"
-            transition="scale-transition"
-            dense
-          >
-            <template #activator="{ on, props }">
-              <v-text-field
-                v-model="posting_date"
-                :label="__('Posting Date')"
-                readonly
-                outlined
-                dense
-                background-color="white"
-                clearable
-                color="primary"
-                hide-details
-                v-bind="props"
-                v-on="on"
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              v-model="posting_date"
-              no-title
-              scrollable
-              color="primary"
-              :min="
-                frappe.datetime.add_days(frappe.datetime.now_date(true), -7)
-              "
-              :max="frappe.datetime.add_days(frappe.datetime.now_date(true), 7)"
-              @input="invoice_posting_date = false"
-            ></v-date-picker>
-          </v-menu>
-        </v-col>
-      </v-row>
-
-      <div class="my-0 py-0 overflow-y-auto" style="max-height: 60vh">
-        <v-data-table
-          :headers="items_headers"
-          :items="items"
-          :single-expand="singleExpand"
-          :expanded.sync="expanded"
-          show-expand
-          item-key="posa_row_id"
-          class="elevation-1"
-          :items-per-page="itemsPerPage"
-          hide-default-footer
-          @mouseover="style = 'cursor: pointer'"
-        >
-          <template #item.qty="{ item }">
-            {{ formtFloat(item.qty) }}
-          </template>
-          <template #item.rate="{ item }">
-            {{ currencySymbol(pos_profile.currency) }}
-            {{ formatCurrency(item.rate) }}
-          </template>
-          <template #item.amount="{ item }">
-            {{ currencySymbol(pos_profile.currency) }}
-            {{
-              formatCurrency(
-                flt(item.qty, float_precision) *
-                  flt(item.rate, currency_precision)
-              )
-            }}
-          </template>
-          <template #item.posa_is_offer="{ item }">
-            <v-checkbox
-              :value="!!item.posa_is_offer || !!item.posa_is_replace"
-              disabled
-            ></v-checkbox>
-          </template>
-
-          <template v-slot:expanded-row="{ columns, item }">
-            <td :colspan="columns.length" class="ma-0 pa-0">
-              <v-row class="ma-0 pa-0">
-                <v-col cols="1">
-                  <v-btn
-                    :disabled="!!item.posa_is_offer || !!item.posa_is_replace"
-                    icon
-                    color="error"
-                    @click.stop="remove_item(item)"
-                  >
-                    <v-icon>mdi-delete</v-icon>
-                  </v-btn>
-                </v-col>
-                <v-spacer></v-spacer>
-                <v-col cols="1">
-                  <v-btn
-                    :disabled="!!item.posa_is_offer || !!item.posa_is_replace"
-                    icon
-                    color="secondary"
-                    @click.stop="subtract_one(item)"
-                  >
-                    <v-icon>mdi-minus-circle-outline</v-icon>
-                  </v-btn>
-                </v-col>
-                <v-col cols="1">
-                  <v-btn
-                    :disabled="!!item.posa_is_offer || !!item.posa_is_replace"
-                    icon
-                    color="secondary"
-                    @click.stop="add_one(item)"
-                  >
-                    <v-icon>mdi-plus-circle-outline</v-icon>
-                  </v-btn>
-                </v-col>
-              </v-row>
-              <v-row class="ma-0 pa-0">
-                <v-col cols="4">
-                  <v-text-field
-                    dense
-                    variant="outlined"
-                    color="primary"
-                    :label="__('Item Code')"
-                    background-color="white"
-                    hide-details
-                    v-model="item.item_code"
-                    disabled
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="4">
-                  <v-text-field
-                    dense
-                    variant="outlined"
-                    color="primary"
-                    :label="__('QTY')"
-                    background-color="white"
-                    hide-details
-                    :model-value="formtFloat(item.qty)"
-                    @change="
-                      [
-                        setFormatedFloat(item, 'qty', null, false, $event),
-                        calc_stock_qty(item, $event),
-                      ]
-                    "
-                    :rules="[isNumber]"
-                    :disabled="!!item.posa_is_offer || !!item.posa_is_replace"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="4">
-                  <v-select
-                    dense
-                    background-color="white"
-                    :label="__('UOM')"
-                    v-model="item.uom"
-                    :items="item.item_uoms"
-                    variant="outlined"
-                    item-title="uom"
-                    item-value="uom"
-                    hide-details
-                    @change="calc_uom(item, $event)"
-                    :disabled="isSelectDisabled"
-                  ></v-select>
-                </v-col>
-                <v-col cols="4">
-                  <v-text-field
-                    dense
-                    variant="outlined"
-                    color="primary"
-                    :label="__('Rate')"
-                    background-color="white"
-                    hide-details
-                    :prefix="currencySymbol(pos_profile.currency)"
-                    :model-value="formatCurrency(item.rate)"
-                    @change="
-                      [
-                        setFormatedCurrency(item, 'rate', null, false, $event),
-                        calc_prices(item, $event),
-                      ]
-                    "
-                    :rules="[isNumber]"
-                    id="rate"
-                    :disabled="isRateDisabled"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="4">
-                  <v-text-field
-                    dense
-                    variant="outlined"
-                    color="primary"
-                    :label="__('Discount Percentage')"
-                    background-color="white"
-                    hide-details
-                    :model-value="formtFloat(item.discount_percentage)"
-                    @change="
-                      [
-                        setFormatedCurrency(
-                          item,
-                          'discount_percentage',
-                          null,
-                          true,
-                          $event
-                        ),
-                        calc_prices(item, $event),
-                      ]
-                    "
-                    :rules="[isNumber]"
-                    id="discount_percentage"
-                    :disabled="isDiscountPercentageDisabled"
-                    suffix="%"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="4">
-                  <v-text-field
-                    dense
-                    variant="outlined"
-                    color="primary"
-                    :label="__('Discount Amount')"
-                    background-color="white"
-                    hide-details
-                    :model-value="formatCurrency(item.discount_amount)"
-                    :rules="[isNumber]"
-                    @change="
-                      [
-                        setFormatedCurrency(
-                          item,
-                          'discount_amount',
-                          null,
-                          false,
-                          $event
-                        ),
-                        calc_prices(item, $event),
-                      ]
-                    "
-                    id="discount_amount"
-                    :disabled="isDiscountAmountDisabled"
-                    :prefix="currencySymbol(pos_profile.currency)"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="4">
-                  <v-text-field
-                    dense
-                    variant="outlined"
-                    color="primary"
-                    :label="__('Tax Rate')"
-                    background-color="white"
-                    hide-details
-                    :model-value="formatCurrency(item.tax_rate)"
-                    @change="
-                      [
-                        setFormatedCurrency(
-                          item,
-                          'tax_rate',
-                          null,
-                          false,
-                          $event
-                        ),
-                        calc_prices(item, $event),
-                      ]
-                    "
-                    :rules="[isNumber]"
-                    id="tax_rate"
-                    suffix="%"
-                    :disabled="readonly"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="4">
-                  <v-text-field
-                    dense
-                    variant="outlined"
-                    color="primary"
-                    :label="__('Tax Amount')"
-                    background-color="white"
-                    hide-details
-                    :model-value="formatCurrency(item.tax_amount)"
-                    :rules="[isNumber]"
-                    @change="
-                      [
-                        setFormatedCurrency(
-                          item,
-                          'tax_amount',
-                          null,
-                          false,
-                          $event
-                        ),
-                        calc_prices(item, $event),
-                      ]
-                    "
-                    id="tax_amount"
-                    :prefix="currencySymbol(pos_profile.currency)"
-                    :disabled="readonly"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="4">
-                  <v-text-field
-                    dense
-                    variant="outlined"
-                    color="primary"
-                    :label="__('Amount')"
-                    background-color="white"
-                    hide-details
-                    :model-value="
-                      formatCurrency(
-                        flt(item.qty, float_precision) *
-                          flt(item.rate, currency_precision)
-                      )
-                    "
-                    :rules="[isNumber]"
-                    id="amount"
-                    :prefix="currencySymbol(pos_profile.currency)"
-                    disabled
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </td>
-          </template>
-        </v-data-table>
-      </div>
+  <v-dialog v-model="cancel_dialog" max-width="330">
+    <v-card>
+      <v-card-title>
+        {{ __("Cancel Current Invoice ?") }}
+      </v-card-title>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="error" @click="cancel_invoice">
+          {{ __("Cancel") }}
+        </v-btn>
+        <v-btn color="warning" @click="cancel_dialog = false">
+          {{ __("Back") }}
+        </v-btn>
+      </v-card-actions>
     </v-card>
+  </v-dialog>
+  <v-card style="height: 70vh">
+    <v-row align="center" class="items">
+      <v-col v-if="pos_profile.posa_allow_sales_order" cols="9">
+        <Customer />
+      </v-col>
+      <v-col v-else cols="12">
+        <Customer />
+      </v-col>
+      <v-col v-if="pos_profile.posa_allow_sales_order" cols="3">
+        <v-select
+          hide-details
+          outlined
+          color="primary"
+          :items="invoiceTypes"
+          :label="__('Type')"
+          v-model="invoiceType"
+          :disabled="invoiceType == 'Return'"
+        ></v-select>
+      </v-col>
+    </v-row>
 
-    <v-card class="mt-2 p-2">
-      <v-row>
-        <v-col cols="8">
-          <v-row>
-            <v-col cols="6">
-              <v-text-field
-                :model-value="formtFloat(total_qty)"
-                :label="__('Total Qty')"
-                variant="outlined"
-                density="compact"
-                readonly
-              ></v-text-field>
-            </v-col>
-            <v-col cols="6" v-if="!pos_profile.posa_use_percentage_discount">
-              <v-text-field
-                :model-value="formatCurrency(discount_amount)"
-                @change="
-                  setFormatedCurrency(
-                    discount_amount,
-                    'discount_amount',
+    <v-row
+      align="center"
+      class="items"
+      v-if="pos_profile.posa_use_delivery_charges"
+    >
+      <v-col cols="8">
+        <v-autocomplete
+          clearable
+          auto-select-first
+          outlined
+          color="primary"
+          :label="__('Delivery Charges')"
+          v-model="selcted_delivery_charges"
+          :items="delivery_charges"
+          item-text="name"
+          return-object
+          :no-data-text="__('Charges not found')"
+          hide-details
+          :filter="deliveryChargesFilter"
+          :disabled="readonly"
+          @change="update_delivery_charges"
+        >
+          <template #item="{ item }">
+            <v-list-item>
+              <v-list-item-title
+                class="primary--text subtitle-1"
+                v-html="item.name"
+              ></v-list-item-title>
+              <v-list-item-subtitle
+                v-html="`Rate: ${item.rate}`"
+              ></v-list-item-subtitle>
+            </v-list-item>
+          </template>
+        </v-autocomplete>
+      </v-col>
+      <v-col cols="4">
+        <v-text-field
+          variant="outlined"
+          color="primary"
+          :label="__('Delivery Charges Rate')"
+          hide-details
+          :model-value="formatCurrency(delivery_charges_rate)"
+          :prefix="currencySymbol(pos_profile.currency)"
+          disabled
+        ></v-text-field>
+      </v-col>
+    </v-row>
+    <v-row
+      align="center"
+      class="items"
+      v-if="pos_profile.posa_allow_change_posting_date"
+    >
+      <v-col cols="4">
+        <v-menu
+          ref="invoice_posting_date"
+          v-model="invoice_posting_date"
+          :close-on-content-click="false"
+          transition="scale-transition"
+        >
+          <template #activator="{ on, props }">
+            <v-text-field
+              v-model="posting_date"
+              :label="__('Posting Date')"
+              readonly
+              variant="outlined"
+              clearable
+              color="primary"
+              hide-details
+              v-bind="props"
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-date-picker
+            v-model="posting_date"
+            no-title
+            scrollable
+            color="primary"
+            :min="frappe.datetime.add_days(frappe.datetime.now_date(true), -7)"
+            :max="frappe.datetime.add_days(frappe.datetime.now_date(true), 7)"
+            @input="invoice_posting_date = false"
+          ></v-date-picker>
+        </v-menu>
+      </v-col>
+    </v-row>
+    <div class="overflow-y-auto" style="height: 70vh">
+      <v-data-table
+        :headers="items_headers"
+        :items="items"
+        :single-expand="singleExpand"
+        :expanded.sync="expanded"
+        show-expand
+        item-key="posa_row_id"
+        class="elevation-1"
+        :items-per-page="itemsPerPage"
+        hide-default-footer
+        @mouseover="style = 'cursor: pointer'"
+      >
+        <template #item.qty="{ item }">
+          {{ formtFloat(item.qty) }}
+        </template>
+        <template #item.rate="{ item }">
+          {{ currencySymbol(pos_profile.currency) }}
+          {{ formatCurrency(item.rate) }}
+        </template>
+        <template #item.amount="{ item }">
+          {{ currencySymbol(pos_profile.currency) }}
+          {{
+            formatCurrency(
+              flt(item.qty, float_precision) *
+                flt(item.rate, currency_precision)
+            )
+          }}
+        </template>
+        <template #item.posa_is_offer="{ item }">
+          <v-checkbox
+            :value="!!item.posa_is_offer || !!item.posa_is_replace"
+            disabled
+          ></v-checkbox>
+        </template>
+
+        <template v-slot:expanded-row="{ columns, item }">
+          <td :colspan="columns.length">
+            <v-row>
+              <v-col cols="1">
+                <v-btn
+                  :disabled="!!item.posa_is_offer || !!item.posa_is_replace"
+                  icon
+                  color="error"
+                  @click.stop="remove_item(item)"
+                >
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </v-col>
+              <v-spacer></v-spacer>
+              <v-col cols="1">
+                <v-btn
+                  :disabled="!!item.posa_is_offer || !!item.posa_is_replace"
+                  icon
+                  color="secondary"
+                  @click.stop="subtract_one(item)"
+                >
+                  <v-icon>mdi-minus-circle-outline</v-icon>
+                </v-btn>
+              </v-col>
+              <v-col cols="1">
+                <v-btn
+                  :disabled="!!item.posa_is_offer || !!item.posa_is_replace"
+                  icon
+                  color="secondary"
+                  @click.stop="add_one(item)"
+                >
+                  <v-icon>mdi-plus-circle-outline</v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="4">
+                <v-text-field
+                  variant="outlined"
+                  color="primary"
+                  :label="__('Item Code')"
+                  hide-details
+                  v-model="item.item_code"
+                  disabled
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  variant="outlined"
+                  color="primary"
+                  :label="__('QTY')"
+                  hide-details
+                  :model-value="formtFloat(item.qty)"
+                  @change="
+                    [
+                      setFormatedFloat(item, 'qty', null, false, $event),
+                      calc_stock_qty(item, $event),
+                    ]
+                  "
+                  :rules="[isNumber]"
+                  :disabled="!!item.posa_is_offer || !!item.posa_is_replace"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-select
+                  :label="__('UOM')"
+                  v-model="item.uom"
+                  :items="item.item_uoms"
+                  variant="outlined"
+                  item-title="uom"
+                  item-value="uom"
+                  hide-details
+                  @change="calc_uom(item, $event)"
+                  :disabled="isSelectDisabled"
+                ></v-select>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  variant="outlined"
+                  color="primary"
+                  :label="__('Rate')"
+                  hide-details
+                  :prefix="currencySymbol(pos_profile.currency)"
+                  :model-value="formatCurrency(item.rate)"
+                  @change="
+                    [
+                      setFormatedCurrency(item, 'rate', null, false, $event),
+                      calc_prices(item, $event),
+                    ]
+                  "
+                  :rules="[isNumber]"
+                  id="rate"
+                  :disabled="isRateDisabled"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  variant="outlined"
+                  color="primary"
+                  :label="__('Discount Percentage')"
+                  hide-details
+                  :model-value="formtFloat(item.discount_percentage)"
+                  @change="
+                    [
+                      setFormatedCurrency(
+                        item,
+                        'discount_percentage',
+                        null,
+                        true,
+                        $event
+                      ),
+                      calc_prices(item, $event),
+                    ]
+                  "
+                  :rules="[isNumber]"
+                  id="discount_percentage"
+                  :disabled="isDiscountPercentageDisabled"
+                  suffix="%"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  variant="outlined"
+                  color="primary"
+                  :label="__('Discount Amount')"
+                  hide-details
+                  :model-value="formatCurrency(item.discount_amount)"
+                  :rules="[isNumber]"
+                  @change="
+                    [
+                      setFormatedCurrency(
+                        item,
+                        'discount_amount',
+                        null,
+                        false,
+                        $event
+                      ),
+                      calc_prices(item, $event),
+                    ]
+                  "
+                  id="discount_amount"
+                  :disabled="isDiscountAmountDisabled"
+                  :prefix="currencySymbol(pos_profile.currency)"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  variant="outlined"
+                  color="primary"
+                  :label="__('Tax Rate')"
+                  hide-details
+                  :model-value="formatCurrency(item.tax_rate)"
+                  @change="
+                    [
+                      setFormatedCurrency(
+                        item,
+                        'tax_rate',
+                        null,
+                        false,
+                        $event
+                      ),
+                      calc_prices(item, $event),
+                    ]
+                  "
+                  :rules="[isNumber]"
+                  id="tax_rate"
+                  suffix="%"
+                  :disabled="readonly"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  variant="outlined"
+                  color="primary"
+                  :label="__('Tax Amount')"
+                  hide-details
+                  :model-value="formatCurrency(item.tax_amount)"
+                  :rules="[isNumber]"
+                  @change="
+                    [
+                      setFormatedCurrency(
+                        item,
+                        'tax_amount',
+                        null,
+                        false,
+                        $event
+                      ),
+                      calc_prices(item, $event),
+                    ]
+                  "
+                  id="tax_amount"
+                  :prefix="currencySymbol(pos_profile.currency)"
+                  :disabled="readonly"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  variant="outlined"
+                  color="primary"
+                  :label="__('Amount')"
+                  hide-details
+                  :model-value="
+                    formatCurrency(
+                      flt(item.qty, float_precision) *
+                        flt(item.rate, currency_precision)
+                    )
+                  "
+                  :rules="[isNumber]"
+                  id="amount"
+                  :prefix="currencySymbol(pos_profile.currency)"
+                  disabled
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </td>
+        </template>
+      </v-data-table>
+    </div>
+  </v-card>
+
+  <v-card class="mt-2 p-3">
+    <v-row align="center" justify="end">
+      <v-col cols="8" class="p-3">
+        <v-row>
+          <v-col cols="6" class="p-1">
+            <v-text-field
+              :model-value="formtFloat(total_qty)"
+              :label="__('Total Qty')"
+              variant="outlined"
+              density="compact"
+              readonly
+            ></v-text-field>
+          </v-col>
+          <v-col
+            cols="6"
+            class="p-1"
+            v-if="!pos_profile.posa_use_percentage_discount"
+          >
+            <v-text-field
+              :model-value="formatCurrency(discount_amount)"
+              @change="
+                setFormatedCurrency(
+                  discount_amount,
+                  'discount_amount',
+                  null,
+                  false,
+                  $event
+                )
+              "
+              :rules="[isNumber]"
+              :label="__('Additional Discount')"
+              ref="discount"
+              variant="outlined"
+              density="compact"
+              hide-details
+              :prefix="currencySymbol(pos_profile.currency)"
+              :disabled="
+                !pos_profile.posa_allow_user_to_edit_additional_discount ||
+                discount_percentage_offer_name
+                  ? true
+                  : false
+              "
+            ></v-text-field>
+          </v-col>
+          <v-col
+            cols="6"
+            class="p-1"
+            v-if="pos_profile.posa_use_percentage_discount"
+          >
+            <v-text-field
+              :model-value="formtFloat(additional_discount_percentage)"
+              @change="
+                [
+                  setFormatedFloat(
+                    additional_discount_percentage,
+                    'additional_discount_percentage',
                     null,
                     false,
                     $event
-                  )
-                "
-                :rules="[isNumber]"
-                :label="__('Additional Discount')"
-                ref="discount"
-                variant="outlined"
-                density="compact"
-                hide-details
-                :prefix="currencySymbol(pos_profile.currency)"
-                :disabled="
-                  !pos_profile.posa_allow_user_to_edit_additional_discount ||
-                  discount_percentage_offer_name
-                    ? true
-                    : false
-                "
-              ></v-text-field>
-            </v-col>
-            <v-col cols="6" v-if="pos_profile.posa_use_percentage_discount">
-              <v-text-field
-                :model-value="formtFloat(additional_discount_percentage)"
-                @change="
-                  [
-                    setFormatedFloat(
-                      additional_discount_percentage,
-                      'additional_discount_percentage',
-                      null,
-                      false,
-                      $event
-                    ),
-                    update_discount_umount(),
-                  ]
-                "
-                :rules="[isNumber]"
-                :label="__('Additional Discount %')"
-                suffix="%"
-                ref="percentage_discount"
-                variant="outlined"
-                density="compact"
-                hide-details
-                :disabled="
-                  !pos_profile.posa_allow_user_to_edit_additional_discount ||
-                  discount_percentage_offer_name
-                    ? true
-                    : false
-                "
-              ></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field
-                :model-value="formatCurrency(total_items_discount_amount)"
-                :prefix="currencySymbol(pos_profile.currency)"
-                :label="__('Items Discounts')"
-                variant="outlined"
-                density="compact"
-                readonly
-                hide-details
-              ></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field
-                :model-value="formatCurrency(subtotal)"
-                :prefix="currencySymbol(pos_profile.currency)"
-                :label="__('Total')"
-                variant="outlined"
-                density="compact"
-                readonly
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col cols="4">
-          <v-row>
-            <v-col cols="6">
-              <v-btn
-                block
-                elevation="0"
-                class="pa-0"
-                color="warning"
-                dark
-                @click="get_draft_invoices"
-                >{{ __("Held") }}</v-btn
-              >
-            </v-col>
-            <v-col
-              v-if="pos_profile.custom_allow_select_sales_order === 1"
-              cols="6"
-              class="pa-1"
+                  ),
+                  update_discount_umount(),
+                ]
+              "
+              :rules="[isNumber]"
+              :label="__('Additional Discount %')"
+              suffix="%"
+              ref="percentage_discount"
+              variant="outlined"
+              density="compact"
+              hide-details
+              :disabled="
+                !pos_profile.posa_allow_user_to_edit_additional_discount ||
+                discount_percentage_offer_name
+                  ? true
+                  : false
+              "
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6" class="p-1">
+            <v-text-field
+              :model-value="formatCurrency(total_items_discount_amount)"
+              :prefix="currencySymbol(pos_profile.currency)"
+              :label="__('Items Discounts')"
+              variant="outlined"
+              density="compact"
+              readonly
+              hide-details
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6" class="p-1">
+            <v-text-field
+              :model-value="formatCurrency(subtotal)"
+              :prefix="currencySymbol(pos_profile.currency)"
+              :label="__('Total')"
+              variant="outlined"
+              density="compact"
+              readonly
+            ></v-text-field>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col cols="4" class="p-3">
+        <v-row>
+          <v-col cols="6" class="p-1">
+            <v-btn
+              block
+              elevation="0"
+              color="warning"
+              dark
+              @click="get_draft_invoices"
+              >{{ __("Held") }}</v-btn
             >
-              <v-btn
-                elevation="0"
-                block
-                class="pa-0"
-                color="info"
-                dark
-                @click="get_draft_orders"
-                >{{ __("Select S.O") }}</v-btn
-              >
-            </v-col>
-            <v-col cols="6" class="pa-1">
-              <v-btn
-                elevation="0"
-                block
-                class="pa-0"
-                :class="{ 'disable-events': !pos_profile.posa_allow_return }"
-                color="secondary"
-                dark
-                @click="open_returns"
-                >{{ __("Return") }}</v-btn
-              >
-            </v-col>
-            <v-col cols="6" class="pa-1">
-              <v-btn
-                elevation="0"
-                block
-                class="pa-0"
-                color="error"
-                dark
-                @click="cancel_dialog = true"
-                >{{ __("Cancel") }}</v-btn
-              >
-            </v-col>
-            <v-col cols="6" class="pa-1">
-              <v-btn
-                elevation="0"
-                block
-                class="pa-0"
-                color="accent"
-                dark
-                @click="new_invoice"
-                >{{ __("Save/New") }}</v-btn
-              >
-            </v-col>
-            <v-col class="pa-1">
-              <v-btn
-                block
-                elevation="0"
-                class="pa-0"
-                color="success"
-                @click="show_payment"
-                dark
-                >{{ __("PAY") }}</v-btn
-              >
-            </v-col>
-            <v-col
-              v-if="pos_profile.posa_allow_print_draft_invoices"
-              cols="6"
-              class="pa-1"
+          </v-col>
+          <v-col
+            class="p-1"
+            v-if="pos_profile.custom_allow_select_sales_order === 1"
+            cols="6"
+          >
+            <v-btn
+              elevation="0"
+              block
+              color="info"
+              dark
+              @click="get_draft_orders"
+              >{{ __("Select S.O") }}</v-btn
             >
-              <v-btn
-                block
-                elevation="0"
-                class="pa-0"
-                color="primary"
-                @click="print_draft_invoice"
-                dark
-                >{{ __("Print Draft") }}</v-btn
-              >
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-    </v-card>
-  </div>
+          </v-col>
+          <v-col cols="6" class="p-1">
+            <v-btn
+              elevation="0"
+              block
+              :class="{ 'disable-events': !pos_profile.posa_allow_return }"
+              color="secondary"
+              dark
+              @click="open_returns"
+              >{{ __("Return") }}</v-btn
+            >
+          </v-col>
+          <v-col cols="6" class="p-1">
+            <v-btn
+              elevation="0"
+              block
+              color="error"
+              dark
+              @click="cancel_dialog = true"
+              >{{ __("Cancel") }}</v-btn
+            >
+          </v-col>
+          <v-col cols="6" class="p-1">
+            <v-btn
+              elevation="0"
+              block
+              color="accent"
+              dark
+              @click="new_invoice"
+              >{{ __("Save/New") }}</v-btn
+            >
+          </v-col>
+          <v-col class="p-1">
+            <v-btn
+              block
+              elevation="0"
+              color="success"
+              @click="show_payment"
+              dark
+              >{{ __("PAY") }}</v-btn
+            >
+          </v-col>
+          <v-col
+            class="p-1"
+            v-if="pos_profile.posa_allow_print_draft_invoices"
+            cols="6"
+          >
+            <v-btn
+              block
+              elevation="0"
+              color="primary"
+              @click="print_draft_invoice"
+              dark
+              >{{ __("Print Draft") }}</v-btn
+            >
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+  </v-card>
 </template>
 
 <script>
