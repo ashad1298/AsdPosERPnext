@@ -1,97 +1,67 @@
 <template>
-  <div>
-    <v-card
-      class="selection mx-auto grey lighten-5"
-      style="max-height: 80vh; height: 80vh"
-    >
-      <v-card-title>
-        <v-row no-gutters align="center" justify="center">
-          <v-col cols="6">
-            <span class="text-h6 primary--text">{{ __('Coupons') }}</span>
-          </v-col>
-          <v-col cols="4">
-            <v-text-field
-              dense
-              outlined
-              color="primary"
-              :label="__('Coupon')"
-              background-color="white"
-              hide-details
-              v-model="new_coupon"
-              class="mr-4"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="2">
-            <v-btn
-              class="pa-1"
-              color="success"
-              dark
-              @click="add_coupon(new_coupon)"
-              >{{ __('add') }}</v-btn
-            >
-          </v-col>
-        </v-row>
-      </v-card-title>
-      <div class="my-0 py-0 overflow-y-auto" style="max-height: 75vh">
-          <v-data-table
-            :headers="items_headers"
-            :items="posa_coupons"
-            :single-expand="singleExpand"
-            :expanded.sync="expanded"
-            item-key="coupon"
-            class="elevation-1"
-            :items-per-page="itemsPerPage"
-            hide-default-footer
-            @mouseover="style = 'cursor: pointer'"
-          >
-            <template v-slot:item.applied="{ item }">
-              <v-simple-checkbox
-                v-model="item.applied"
-                disabled
-              ></v-simple-checkbox>
-            </template>
-          </v-data-table>
-      </div>
-    </v-card>
+  <v-card style="max-height: 85vh; height: 85vh">
+    <v-card-title>
+      {{ __("Coupons") }}
+    </v-card-title>
+    <section class="p-2">
+      <v-text-field
+        variant="outlined"
+        density="compact"
+        color="primary"
+        :label="__('Coupon')"
+        v-model="new_coupon"
+      >
+        <template v-slot:append>
+          <v-btn color="success" @click="add_coupon(new_coupon)">
+            {{ __("add") }}
+          </v-btn>
+        </template>
+      </v-text-field>
+    </section>
+    <div class="overflow-y-auto">
+      <v-data-table
+        :headers="items_headers"
+        :items="posa_coupons"
+        :single-expand="singleExpand"
+        item-key="coupon"
+        :items-per-page="itemsPerPage"
+        hide-default-footer
+        @mouseover="style = 'cursor: pointer'"
+      >
+        <template v-slot:item.applied="{ item }">
+          <v-checkbox v-model="item.applied" disabled></v-checkbox>
+        </template>
+      </v-data-table>
+    </div>
+  </v-card>
 
-    <v-card
-      flat
-      style="max-height: 11vh; height: 11vh"
-      class="cards mb-0 mt-3 py-0"
-    >
-      <v-row align="start" no-gutters>
-        <v-col cols="12">
-          <v-btn
-            block
-            class="pa-1"
-            large
-            color="warning"
-            dark
-            @click="back_to_invoice"
-            >{{ __('Back') }}</v-btn
-          >
-        </v-col>
-      </v-row>
-    </v-card>
-  </div>
+  <v-btn
+    elevation="0"
+    block
+    class="mt-2"
+    variant="flat"
+    color="warning"
+    @click="back_to_invoice"
+    >{{ __("Back") }}</v-btn
+  >
 </template>
 
 <script>
-import { eventBus } from '../../bus';
+import { eventBus } from "../../bus";
 export default {
   data: () => ({
     loading: false,
-    pos_profile: '',
-    customer: '',
+    pos_profile: "",
+    customer: "",
     posa_coupons: [],
     new_coupon: null,
     itemsPerPage: 1000,
     singleExpand: true,
     items_headers: [
-      { title: __('Coupon'), key: 'coupon_code', align: 'start' },
-      { title: __('Type'), key: 'type', align: 'start' },
-      { title: __('Offer'), key: 'pos_offer', align: 'start' },
-      { title: __('Applied'), key: 'applied', align: 'start' },
+      { title: __("Coupon"), key: "coupon_code", align: "start" },
+      { title: __("Type"), key: "type", align: "start" },
+      { title: __("Offer"), key: "pos_offer", align: "start" },
+      { title: __("Applied"), key: "applied", align: "start" },
     ],
   }),
 
@@ -106,7 +76,7 @@ export default {
 
   methods: {
     back_to_invoice() {
-      eventBus.emit('show_coupons', 'false');
+      eventBus.emit("show_coupons", "false");
     },
     add_coupon(new_coupon) {
       if (!this.customer || !new_coupon) return;
@@ -114,15 +84,15 @@ export default {
         (el) => el.coupon_code == new_coupon
       );
       if (exist) {
-        eventBus.emit('show_mesage', {
-          text: __('This coupon already used !'),
-          color: 'error',
+        eventBus.emit("show_mesage", {
+          text: __("This coupon already used !"),
+          color: "error",
         });
         return;
       }
       const vm = this;
       frappe.call({
-        method: 'posawesome.posawesome.api.posapp.get_pos_coupon',
+        method: "posawesome.posawesome.api.posapp.get_pos_coupon",
         args: {
           coupon: new_coupon,
           customer: vm.customer,
@@ -131,10 +101,10 @@ export default {
         callback: function (r) {
           if (r.message) {
             const res = r.message;
-            if (res.msg != 'Apply' || !res.coupon) {
-              eventBus.emit('show_mesage', {
+            if (res.msg != "Apply" || !res.coupon) {
+              eventBus.emit("show_mesage", {
                 text: res.msg,
-                color: 'error',
+                color: "error",
               });
             } else {
               vm.new_coupon = null;
@@ -156,7 +126,7 @@ export default {
       if (!this.customer) return;
       const vm = this;
       frappe.call({
-        method: 'posawesome.posawesome.api.posapp.get_active_gift_coupons',
+        method: "posawesome.posawesome.api.posapp.get_active_gift_coupons",
         args: {
           customer: vm.customer,
           company: vm.pos_profile.company,
@@ -191,10 +161,10 @@ export default {
       );
     },
     updateInvoice() {
-      eventBus.emit('update_invoice_coupons', this.posa_coupons);
+      eventBus.emit("update_invoice_coupons", this.posa_coupons);
     },
     updateCounters() {
-      eventBus.emit('update_coupons_counters', {
+      eventBus.emit("update_coupons_counters", {
         couponsCount: this.couponsCount,
         appliedCouponsCount: this.appliedCouponsCount,
       });
@@ -213,15 +183,15 @@ export default {
 
   created: function () {
     this.$nextTick(function () {
-      eventBus.on('register_pos_profile', (data) => {
+      eventBus.on("register_pos_profile", (data) => {
         this.pos_profile = data.pos_profile;
       });
     });
-    eventBus.on('update_customer', (customer) => {
+    eventBus.on("update_customer", (customer) => {
       if (this.customer != customer) {
         const to_remove = [];
         this.posa_coupons.forEach((el) => {
-          if (el.type == 'Promotional') {
+          if (el.type == "Promotional") {
             el.customer = customer;
           } else {
             to_remove.push(el.coupon);
@@ -234,10 +204,10 @@ export default {
       }
       this.setActiveGiftCoupons();
     });
-    eventBus.on('update_pos_coupons', (data) => {
+    eventBus.on("update_pos_coupons", (data) => {
       this.updatePosCoupons(data);
     });
-    eventBus.on('set_pos_coupons', (data) => {
+    eventBus.on("set_pos_coupons", (data) => {
       this.posa_coupons = data;
     });
   },

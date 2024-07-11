@@ -2,10 +2,8 @@
   <div>
     <v-dialog v-model="cancel_dialog" max-width="330">
       <v-card>
-        <v-card-title class="text-h5">
-          <span class="headline primary--text">{{
-            __("Cancel Current Invoice ?")
-          }}</span>
+        <v-card-title>
+          {{ __("Cancel Current Invoice ?") }}
         </v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -18,10 +16,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-card
-      style="max-height: 70vh; height: 70vh"
-      class="cards my-0 py-0 mt-3 grey lighten-5"
-    >
+    <v-card style="max-height: 70vh; height: 70vh">
       <v-row align="center" class="items px-2 py-1">
         <v-col
           v-if="pos_profile.posa_allow_sales_order"
@@ -73,13 +68,15 @@
             @change="update_delivery_charges"
           >
             <template #item="{ item }">
-              <v-list-item-content>
+              <v-list-item>
                 <v-list-item-title
                   class="primary--text subtitle-1"
                   v-html="item.name"
                 ></v-list-item-title>
-                <v-list-item-subtitle v-html="`Rate: ${item.rate}`"></v-list-item-subtitle>
-              </v-list-item-content>
+                <v-list-item-subtitle
+                  v-html="`Rate: ${item.rate}`"
+                ></v-list-item-subtitle>
+              </v-list-item>
             </template>
           </v-autocomplete>
         </v-col>
@@ -130,7 +127,9 @@
               no-title
               scrollable
               color="primary"
-              :min="frappe.datetime.add_days(frappe.datetime.now_date(true), -7)"
+              :min="
+                frappe.datetime.add_days(frappe.datetime.now_date(true), -7)
+              "
               :max="frappe.datetime.add_days(frappe.datetime.now_date(true), 7)"
               @input="invoice_posting_date = false"
             ></v-date-picker>
@@ -155,18 +154,27 @@
             {{ formtFloat(item.qty) }}
           </template>
           <template #item.rate="{ item }">
-            {{ currencySymbol(pos_profile.currency) }} {{ formatCurrency(item.rate) }}
+            {{ currencySymbol(pos_profile.currency) }}
+            {{ formatCurrency(item.rate) }}
           </template>
           <template #item.amount="{ item }">
             {{ currencySymbol(pos_profile.currency) }}
-            {{ formatCurrency(flt(item.qty, float_precision) * flt(item.rate, currency_precision)) }}
+            {{
+              formatCurrency(
+                flt(item.qty, float_precision) *
+                  flt(item.rate, currency_precision)
+              )
+            }}
           </template>
           <template #item.posa_is_offer="{ item }">
-            <v-checkbox :value="!!item.posa_is_offer || !!item.posa_is_replace" disabled></v-checkbox>
+            <v-checkbox
+              :value="!!item.posa_is_offer || !!item.posa_is_replace"
+              disabled
+            ></v-checkbox>
           </template>
 
-          <template #expanded-item="{ headers, item }">
-            <td :colspan="headers.length" class="ma-0 pa-0">
+          <template v-slot:expanded-row="{ columns, item }">
+            <td :colspan="columns.length" class="ma-0 pa-0">
               <v-row class="ma-0 pa-0">
                 <v-col cols="1">
                   <v-btn
@@ -204,7 +212,7 @@
                 <v-col cols="4">
                   <v-text-field
                     dense
-                    outlined
+                    variant="outlined"
                     color="primary"
                     :label="__('Item Code')"
                     background-color="white"
@@ -216,13 +224,18 @@
                 <v-col cols="4">
                   <v-text-field
                     dense
-                    outlined
+                    variant="outlined"
                     color="primary"
                     :label="__('QTY')"
                     background-color="white"
                     hide-details
                     :model-value="formtFloat(item.qty)"
-                    @change="[setFormatedFloat(item, 'qty', null, false, $event), calc_stock_qty(item, $event)]"
+                    @change="
+                      [
+                        setFormatedFloat(item, 'qty', null, false, $event),
+                        calc_stock_qty(item, $event),
+                      ]
+                    "
                     :rules="[isNumber]"
                     :disabled="!!item.posa_is_offer || !!item.posa_is_replace"
                   ></v-text-field>
@@ -234,8 +247,8 @@
                     :label="__('UOM')"
                     v-model="item.uom"
                     :items="item.item_uoms"
-                    outlined
-                    item-text="uom"
+                    variant="outlined"
+                    item-title="uom"
                     item-value="uom"
                     hide-details
                     @change="calc_uom(item, $event)"
@@ -245,14 +258,19 @@
                 <v-col cols="4">
                   <v-text-field
                     dense
-                    outlined
+                    variant="outlined"
                     color="primary"
                     :label="__('Rate')"
                     background-color="white"
                     hide-details
                     :prefix="currencySymbol(pos_profile.currency)"
                     :model-value="formatCurrency(item.rate)"
-                    @change="[setFormatedCurrency(item, 'rate', null, false, $event), calc_prices(item, $event)]"
+                    @change="
+                      [
+                        setFormatedCurrency(item, 'rate', null, false, $event),
+                        calc_prices(item, $event),
+                      ]
+                    "
                     :rules="[isNumber]"
                     id="rate"
                     :disabled="isRateDisabled"
@@ -261,13 +279,24 @@
                 <v-col cols="4">
                   <v-text-field
                     dense
-                    outlined
+                    variant="outlined"
                     color="primary"
                     :label="__('Discount Percentage')"
                     background-color="white"
                     hide-details
                     :model-value="formtFloat(item.discount_percentage)"
-                    @change="[setFormatedCurrency(item, 'discount_percentage', null, true, $event), calc_prices(item, $event)]"
+                    @change="
+                      [
+                        setFormatedCurrency(
+                          item,
+                          'discount_percentage',
+                          null,
+                          true,
+                          $event
+                        ),
+                        calc_prices(item, $event),
+                      ]
+                    "
                     :rules="[isNumber]"
                     id="discount_percentage"
                     :disabled="isDiscountPercentageDisabled"
@@ -277,14 +306,25 @@
                 <v-col cols="4">
                   <v-text-field
                     dense
-                    outlined
+                    variant="outlined"
                     color="primary"
                     :label="__('Discount Amount')"
                     background-color="white"
                     hide-details
                     :model-value="formatCurrency(item.discount_amount)"
                     :rules="[isNumber]"
-                    @change="[setFormatedCurrency(item, 'discount_amount', null, false, $event), calc_prices(item, $event)]"
+                    @change="
+                      [
+                        setFormatedCurrency(
+                          item,
+                          'discount_amount',
+                          null,
+                          false,
+                          $event
+                        ),
+                        calc_prices(item, $event),
+                      ]
+                    "
                     id="discount_amount"
                     :disabled="isDiscountAmountDisabled"
                     :prefix="currencySymbol(pos_profile.currency)"
@@ -293,13 +333,24 @@
                 <v-col cols="4">
                   <v-text-field
                     dense
-                    outlined
+                    variant="outlined"
                     color="primary"
                     :label="__('Tax Rate')"
                     background-color="white"
                     hide-details
                     :model-value="formatCurrency(item.tax_rate)"
-                    @change="[setFormatedCurrency(item, 'tax_rate', null, false, $event), calc_prices(item, $event)]"
+                    @change="
+                      [
+                        setFormatedCurrency(
+                          item,
+                          'tax_rate',
+                          null,
+                          false,
+                          $event
+                        ),
+                        calc_prices(item, $event),
+                      ]
+                    "
                     :rules="[isNumber]"
                     id="tax_rate"
                     suffix="%"
@@ -309,14 +360,25 @@
                 <v-col cols="4">
                   <v-text-field
                     dense
-                    outlined
+                    variant="outlined"
                     color="primary"
                     :label="__('Tax Amount')"
                     background-color="white"
                     hide-details
                     :model-value="formatCurrency(item.tax_amount)"
                     :rules="[isNumber]"
-                    @change="[setFormatedCurrency(item, 'tax_amount', null, false, $event), calc_prices(item, $event)]"
+                    @change="
+                      [
+                        setFormatedCurrency(
+                          item,
+                          'tax_amount',
+                          null,
+                          false,
+                          $event
+                        ),
+                        calc_prices(item, $event),
+                      ]
+                    "
                     id="tax_amount"
                     :prefix="currencySymbol(pos_profile.currency)"
                     :disabled="readonly"
@@ -325,12 +387,17 @@
                 <v-col cols="4">
                   <v-text-field
                     dense
-                    outlined
+                    variant="outlined"
                     color="primary"
                     :label="__('Amount')"
                     background-color="white"
                     hide-details
-                    :model-value="formatCurrency(flt(item.qty, float_precision) * flt(item.rate, currency_precision))"
+                    :model-value="
+                      formatCurrency(
+                        flt(item.qty, float_precision) *
+                          flt(item.rate, currency_precision)
+                      )
+                    "
                     :rules="[isNumber]"
                     id="amount"
                     :prefix="currencySymbol(pos_profile.currency)"
@@ -344,26 +411,20 @@
       </div>
     </v-card>
 
-    <v-card class="cards mb-0 mt-3 py-0 grey lighten-5">
-      <v-row no-gutters>
-        <v-col cols="7">
-          <v-row no-gutters class="pa-1 pt-9 pr-1">
-            <v-col cols="6" class="pa-1">
+    <v-card class="mt-2 p-2">
+      <v-row>
+        <v-col cols="8">
+          <v-row>
+            <v-col cols="6">
               <v-text-field
                 :model-value="formtFloat(total_qty)"
                 :label="__('Total Qty')"
-                outlined
-                dense
+                variant="outlined"
+                density="compact"
                 readonly
-                hide-details
-                color="accent"
               ></v-text-field>
             </v-col>
-            <v-col
-              v-if="!pos_profile.posa_use_percentage_discount"
-              cols="6"
-              class="pa-1"
-            >
+            <v-col cols="6" v-if="!pos_profile.posa_use_percentage_discount">
               <v-text-field
                 :model-value="formatCurrency(discount_amount)"
                 @change="
@@ -378,10 +439,9 @@
                 :rules="[isNumber]"
                 :label="__('Additional Discount')"
                 ref="discount"
-                outlined
-                dense
+                variant="outlined"
+                density="compact"
                 hide-details
-                color="warning"
                 :prefix="currencySymbol(pos_profile.currency)"
                 :disabled="
                   !pos_profile.posa_allow_user_to_edit_additional_discount ||
@@ -391,11 +451,7 @@
                 "
               ></v-text-field>
             </v-col>
-            <v-col
-              v-if="pos_profile.posa_use_percentage_discount"
-              cols="6"
-              class="pa-1"
-            >
+            <v-col cols="6" v-if="pos_profile.posa_use_percentage_discount">
               <v-text-field
                 :model-value="formtFloat(additional_discount_percentage)"
                 @change="
@@ -414,9 +470,8 @@
                 :label="__('Additional Discount %')"
                 suffix="%"
                 ref="percentage_discount"
-                outlined
-                dense
-                color="warning"
+                variant="outlined"
+                density="compact"
                 hide-details
                 :disabled="
                   !pos_profile.posa_allow_user_to_edit_additional_discount ||
@@ -426,38 +481,35 @@
                 "
               ></v-text-field>
             </v-col>
-            <v-col cols="6" class="pa-1 mt-2">
+            <v-col cols="6">
               <v-text-field
                 :model-value="formatCurrency(total_items_discount_amount)"
                 :prefix="currencySymbol(pos_profile.currency)"
                 :label="__('Items Discounts')"
-                outlined
-                dense
-                color="warning"
+                variant="outlined"
+                density="compact"
                 readonly
                 hide-details
               ></v-text-field>
             </v-col>
-
-            <v-col cols="6" class="pa-1 mt-2">
+            <v-col cols="6">
               <v-text-field
                 :model-value="formatCurrency(subtotal)"
                 :prefix="currencySymbol(pos_profile.currency)"
                 :label="__('Total')"
-                outlined
-                dense
+                variant="outlined"
+                density="compact"
                 readonly
-                hide-details
-                color="success"
               ></v-text-field>
             </v-col>
           </v-row>
         </v-col>
-        <v-col cols="5">
-          <v-row no-gutters class="pa-1 pt-2 pl-0">
-            <v-col cols="6" class="pa-1">
+        <v-col cols="4">
+          <v-row>
+            <v-col cols="6">
               <v-btn
                 block
+                elevation="0"
                 class="pa-0"
                 color="warning"
                 dark
@@ -471,6 +523,7 @@
               class="pa-1"
             >
               <v-btn
+                elevation="0"
                 block
                 class="pa-0"
                 color="info"
@@ -481,6 +534,7 @@
             </v-col>
             <v-col cols="6" class="pa-1">
               <v-btn
+                elevation="0"
                 block
                 class="pa-0"
                 :class="{ 'disable-events': !pos_profile.posa_allow_return }"
@@ -492,6 +546,7 @@
             </v-col>
             <v-col cols="6" class="pa-1">
               <v-btn
+                elevation="0"
                 block
                 class="pa-0"
                 color="error"
@@ -502,6 +557,7 @@
             </v-col>
             <v-col cols="6" class="pa-1">
               <v-btn
+                elevation="0"
                 block
                 class="pa-0"
                 color="accent"
@@ -513,6 +569,7 @@
             <v-col class="pa-1">
               <v-btn
                 block
+                elevation="0"
                 class="pa-0"
                 color="success"
                 @click="show_payment"
@@ -527,6 +584,7 @@
             >
               <v-btn
                 block
+                elevation="0"
                 class="pa-0"
                 color="primary"
                 @click="print_draft_invoice"

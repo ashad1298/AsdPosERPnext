@@ -1,9 +1,6 @@
 <template>
   <div>
-    <v-card
-      class="selection mx-auto grey lighten-5 mt-3"
-      style="max-height: 75vh; height: 75vh"
-    >
+    <v-card style="max-height: 75vh; height: 75vh">
       <v-progress-linear
         :active="loading"
         :indeterminate="loading"
@@ -11,18 +8,15 @@
         top
         color="info"
       ></v-progress-linear>
-      <v-row class="items px-2 py-1">
-        <v-col class="pb-0 mb-2">
+      <v-row class="items p-2">
+        <v-col>
           <v-text-field
-            dense
+            variant="outlined"
             clearable
             autofocus
-            outlined
             color="primary"
             :label="__('Search Items')"
             hint="Search by item code, serial number, batch no or barcode"
-            background-color="white"
-            hide-details
             v-model="debounce_search"
             @keydown.esc="esc_event"
             @keydown.enter="search_onchange"
@@ -31,12 +25,9 @@
         </v-col>
         <v-col cols="3" class="pb-0 mb-2" v-if="pos_profile.posa_input_qty">
           <v-text-field
-            dense
-            outlined
+            variant="outlined"
             color="primary"
             :label="__('QTY')"
-            background-color="white"
-            hide-details
             v-model.number="qty"
             type="number"
             @keydown.enter="enter_event"
@@ -97,64 +88,58 @@
           </div>
           <div fluid class="items" v-if="items_view == 'list'">
             <div class="my-0 py-0 overflow-y-auto" style="max-height: 65vh">
-                <v-data-table
-                  :headers="getItmesHeaders()"
-                  :items="filtred_items"
-                  item-key="item_code"
-                  class="elevation-1"
-                  :items-per-page="itemsPerPage"
-                  hide-default-footer
-                  @click:row="add_item"
-                >
-                  <template v-slot:item.rate="{ item }">
-                    <span class="primary--text"
-                      >{{ currencySymbol(item.currency) }}
-                      {{ formatCurrency(item.rate) }}</span
-                    >
-                  </template>
-                  <template v-slot:item.actual_qty="{ item }">
-                    <span class="golden--text">{{
-                      formtFloat(item.actual_qty)
-                    }}</span>
-                  </template>
-                </v-data-table>
+              <v-data-table
+                :headers="getItmesHeaders()"
+                :items="filtred_items"
+                item-key="item_code"
+                class="elevation-1"
+                :items-per-page="itemsPerPage"
+                hide-default-footer
+                @click:row="add_item"
+              >
+                <template v-slot:item.rate="{ item }">
+                  <span class="primary--text"
+                    >{{ currencySymbol(item.currency) }}
+                    {{ formatCurrency(item.rate) }}</span
+                  >
+                </template>
+                <template v-slot:item.actual_qty="{ item }">
+                  <span class="golden--text">{{
+                    formtFloat(item.actual_qty)
+                  }}</span>
+                </template>
+              </v-data-table>
             </div>
           </div>
         </v-col>
       </v-row>
     </v-card>
-    <v-card class="cards mb-0 mt-3 pa-2 grey lighten-5">
-      <v-row no-gutters align="center" justify="center">
-        <v-col cols="12">
-          <v-select
-            :items="items_group"
-            :label="__('Items Group')"
-            dense
-            outlined
-            hide-details
-            v-model="item_group"
-            v-on:change="search_onchange"
-          ></v-select>
-        </v-col>
-        <v-col cols="3" class="mt-1">
-          <v-btn-toggle
-            v-model="items_view"
-            color="primary"
-            group
-            dense
-            rounded
-          >
-            <v-btn small value="list">{{ __("List") }}</v-btn>
-            <v-btn small value="card">{{ __("Card") }}</v-btn>
+    <v-card class="mt-2 p-2">
+      <v-select
+        :items="items_group"
+        :label="__('Items Group')"
+        variant="outlined"
+        v-model="item_group"
+        v-on:change="search_onchange"
+      ></v-select>
+      <v-row class="align-end">
+        <v-col cols="4">
+          <v-btn-toggle v-model="items_view" color="primary">
+            <v-btn size="small" elevation="0" value="list">
+              {{ __("List") }}
+            </v-btn>
+            <v-btn size="small" elevation="0" value="card">
+              {{ __("Card") }}
+            </v-btn>
           </v-btn-toggle>
         </v-col>
-        <v-col cols="4" class="mt-2">
-          <v-btn small block color="primary" text @click="show_coupons"
+        <v-col cols="4">
+          <v-btn elevation="0" color="primary" text block @click="show_coupons"
             >{{ couponsCount }} {{ __("Coupons") }}</v-btn
           >
         </v-col>
-        <v-col cols="5" class="mt-2">
-          <v-btn small block color="primary" text @click="show_offers"
+        <v-col cols="4">
+          <v-btn elevation="0" color="primary" text block @click="show_offers"
             >{{ offersCount }} {{ __("Offers") }} : {{ appliedOffersCount }}
             {{ __("Applied") }}</v-btn
           >
@@ -326,12 +311,12 @@ export default {
       return items_headers;
     },
     add_item(event, item) {
-      if(event){
-        item = item.item
+      if (event) {
+        item = item.item;
       }
 
       item = { ...item };
-      
+
       if (item.has_variants) {
         eventBus.emit("open_variants_model", item, this.items);
       } else {

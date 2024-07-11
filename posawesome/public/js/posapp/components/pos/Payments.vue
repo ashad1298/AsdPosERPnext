@@ -365,7 +365,6 @@
             >
               <template v-slot:item="data">
                 <template>
-                  <v-list-item-content>
                     <v-list-item-title
                       class="primary--text subtitle-1"
                       v-html="data.item.address_title"
@@ -393,7 +392,6 @@
                       v-if="data.item.address_type"
                       v-html="data.item.address_type"
                     ></v-list-item-subtitle>
-                  </v-list-item-content>
                 </template>
               </template>
             </v-autocomplete>
@@ -606,8 +604,6 @@
               :disabled="readonly"
             >
               <template v-slot:item="data">
-                <template>
-                  <v-list-item-content>
                     <v-list-item-title
                       class="primary--text subtitle-1"
                       v-html="data.item.sales_person_name"
@@ -616,8 +612,6 @@
                       v-if="data.item.sales_person_name != data.item.name"
                       v-html="`ID: ${data.item.name}`"
                     ></v-list-item-subtitle>
-                  </v-list-item-content>
-                </template>
               </template>
             </v-autocomplete>
           </v-col>

@@ -20,7 +20,7 @@
                     hide-default-footer
                   >
                     <template v-slot:item.closing_amount="props">
-                      <v-edit-dialog
+                      <v-dialog
                         :return-value.sync="props.item.closing_amount"
                       >
                         {{ currencySymbol(pos_profile.currency) }}
@@ -35,7 +35,7 @@
                             type="number"
                           ></v-text-field>
                         </template>
-                      </v-edit-dialog>
+                      </v-dialog>
                     </template>
                     <template v-slot:item.difference="{ item }">
                       {{ currencySymbol(pos_profile.currency) }}
