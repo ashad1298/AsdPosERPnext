@@ -228,7 +228,7 @@
                   item-title="uom"
                   item-value="uom"
                   hide-details
-                  @change="calc_uom(item, $event)"
+                  @update:modelValue="calc_uom(item, $event)"
                   :disabled="isSelectDisabled"
                 ></v-select>
               </v-col>

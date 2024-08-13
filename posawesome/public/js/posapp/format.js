@@ -33,18 +33,19 @@ export default {
             let value = 0;
             try {
                 // make sure it is a number and positive
-                let _value = parseFloat($event);
+                let _value = parseFloat($event.target.value);
                 if (!isNaN(_value)) {
                     value = _value;
                 }
                 if (no_negative && value < 0) {
                     value = value * -1;
                 }
-                value = this.formatCurrency($event, precision);
+                value = this.formatCurrency($event.target.value, precision);
             } catch (e) {
                 console.error(e);
                 value = 0;
             }
+            
             // check if el is an object
             if (typeof el === "object") {
                 el[field_name] = value;
@@ -52,7 +53,6 @@ export default {
             else {
                 this[field_name] = value;
             }
-
 
             return value;
         },
