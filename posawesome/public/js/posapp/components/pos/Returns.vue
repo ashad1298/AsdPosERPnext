@@ -33,7 +33,7 @@
               <v-data-table
                 :headers="headers"
                 :items="dialog_data"
-                item-key="name"
+                item-value="name"
                 class="elevation-1"
                 :single-select="singleSelect"
                 show-select
@@ -129,24 +129,41 @@ export default {
       });
     },
     submit_dialog() {
+      const vm = this
+
       if (this.selected.length > 0) {
-        const return_doc = this.selected[0];
-        const invoice_doc = {};
-        const items = [];
-        return_doc.items.forEach((item) => {
-          const new_item = { ...item };
-          new_item.qty = item.qty * -1;
-          new_item.stock_qty = item.stock_qty * -1;
-          new_item.amount = item.amount * -1;
-          items.push(new_item);
+        frappe.call({
+          method: "posawesome.posawesome.api.posapp.search_invoices_for_return",
+          args: {
+            invoice_name: this.selected[0],
+            company: this.company,
+          },
+          async: false,
+          callback: function (r) {
+            if (r.message) {
+              const return_doc = r.message[0];
+              
+              const invoice_doc = {};
+              const items = [];
+              
+              return_doc.items.forEach((item) => {
+                const new_item = { ...item };
+                new_item.qty = item.qty * -1;
+                new_item.stock_qty = item.stock_qty * -1;
+                new_item.amount = item.amount * -1;
+                items.push(new_item);
+              });
+              
+              invoice_doc.items = items;
+              invoice_doc.is_return = 1;
+              invoice_doc.return_against = return_doc.name;
+              invoice_doc.customer = return_doc.customer;
+              const data = { invoice_doc, return_doc };
+              eventBus.emit("load_return_invoice", data);
+              vm.invoicesDialog = false;
+            }
+          },
         });
-        invoice_doc.items = items;
-        invoice_doc.is_return = 1;
-        invoice_doc.return_against = return_doc.name;
-        invoice_doc.customer = return_doc.customer;
-        const data = { invoice_doc, return_doc };
-        eventBus.emit("load_return_invoice", data);
-        this.invoicesDialog = false;
       }
     },
   },

@@ -16,8 +16,8 @@
               <v-col cols="12" class="pa-1">
                 <v-data-table
                   :headers="headers"
-                    :items="dialog_data"
-                  item-key="name"
+                  :items="dialog_data"
+                  item-value="name"
                   class="elevation-1"
                   :single-select="singleSelect"
                   show-select
@@ -55,7 +55,7 @@ export default {
       draftsDialog: false,
       singleSelect: true,
       selected: [],
-      dialog_data: {},
+      dialog_data: [],
       headers: [
         {
           title: __('Customer'),
@@ -102,10 +102,11 @@ export default {
       }
     },
   },
+
   mounted() {
     eventBus.on('open_drafts', (data) => {
       this.draftsDialog = true;
-      this.dialogData = data;
+      this.dialog_data = data;
     });
   },
 };
