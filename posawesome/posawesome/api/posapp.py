@@ -1238,6 +1238,13 @@ def search_invoices_for_return(invoice_name, company):
 
 
 @frappe.whitelist()
+def get_invoice(invoice_name):
+    invoice = frappe.get_doc("Sales Invoice", invoice_name)
+    
+    return invoice
+
+
+@frappe.whitelist()
 def search_orders(company, currency, order_name=None):
     filters = {
         "billing_status": ["in", ["Not Billed", "Partly Billed"]],

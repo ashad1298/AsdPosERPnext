@@ -97,7 +97,19 @@ export default {
 
     submit_dialog() {
       if (this.selected.length > 0) {
-        eventBus.emit('load_invoice', this.selected[0]);
+        frappe.call({
+          method: "posawesome.posawesome.api.posapp.get_invoice",
+          args: {
+            invoice_name: this.selected[0],
+          },
+          async: false,
+          callback: function (r) {
+            if (r.message) {
+              eventBus.emit('load_invoice', r.message);
+            }
+          },
+        });
+
         this.draftsDialog = false;
       }
     },
