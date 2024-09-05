@@ -102,7 +102,7 @@ export default {
           args: {
             invoice_name: this.selected[0],
           },
-          async: false,
+          async: false, 
           callback: function (r) {
             if (r.message) {
               eventBus.emit('load_invoice', r.message);

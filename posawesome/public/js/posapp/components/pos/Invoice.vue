@@ -258,17 +258,17 @@
                   :label="__('Discount Percentage')"
                   hide-details
                   :model-value="formtFloat(item.discount_percentage)"
-                  @change="
-                    [
+                  @change="($event) => {
                       setFormatedCurrency(
                         item,
                         'discount_percentage',
                         null,
                         true,
                         $event
-                      ),
-                      calc_prices(item, $event),
-                    ]
+                      );
+
+                      calc_prices(item, $event)
+                  }
                   "
                   :rules="[isNumber]"
                   id="discount_percentage"
@@ -1615,6 +1615,9 @@ export default {
     },
     update_discount_umount() {
       const value = flt(this.additional_discount_percentage);
+      
+      console.log(value);
+      
       if (value >= -100 && value <= 100) {
         this.discount_amount = (this.Total * value) / 100;
       } else {
@@ -1623,7 +1626,9 @@ export default {
       }
     },
 
-    calc_prices(item, value, $event) {
+    calc_prices(item, event) {
+      let value = event.target.value
+      
       if (event.target.id === "rate") {
         item.discount_percentage = 0;
         if (value < item.price_list_rate) {
