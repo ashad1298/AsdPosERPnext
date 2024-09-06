@@ -1873,6 +1873,7 @@ def get_table_names_ui():
     return tables
 
 
+
 @frappe.whitelist()
 def get_invoice_by_table_name(table_name):
     invoice = frappe.get_list("Sales Invoice", { "custom_pos_table": table_name, "docstatus": 0})
