@@ -58,6 +58,12 @@ export default {
       dialog_data: [],
       headers: [
         {
+          text: __('Table'),
+          value: 'custom_pos_table',
+          align: 'start',
+          sortable: true,
+        },
+        {
           title: __('Customer'),
           key: 'customer_name',
           align: 'start',

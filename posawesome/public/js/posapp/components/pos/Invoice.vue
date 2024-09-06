@@ -16,25 +16,50 @@
     </v-card>
   </v-dialog>
   <v-card style="height: 70vh">
-    <v-row align="center" class="items">
-      <v-col v-if="pos_profile.posa_allow_sales_order" cols="9">
-        <Customer />
-      </v-col>
-      <v-col v-else cols="12">
-        <Customer />
-      </v-col>
-      <v-col v-if="pos_profile.posa_allow_sales_order" cols="3">
-        <v-select
-          hide-details
-          outlined
-          color="primary"
-          :items="invoiceTypes"
-          :label="__('Type')"
-          v-model="invoiceType"
-          :disabled="invoiceType == 'Return'"
-        ></v-select>
-      </v-col>
-    </v-row>
+    <v-row align="center" class="items px-2 py-1">
+        <v-col
+          v-if="pos_profile.posa_allow_sales_order"
+          cols="4"
+          class="pb-2 pr-0"
+        >
+          <Customer></Customer>
+        </v-col>
+        <v-col
+          v-if="!pos_profile.posa_allow_sales_order"
+          cols="7"
+          class="pb-2"
+        >
+          <Customer></Customer>
+        </v-col>
+
+        <v-col
+          cols="3"
+          class="pb-2"
+        >
+          <TableDropdown></TableDropdown>
+        </v-col>
+        
+        <v-col
+          cols="2"
+          class="pb-2"
+        >
+          <OrderType></OrderType>
+        </v-col>
+
+        <v-col v-if="pos_profile.posa_allow_sales_order" cols="3" class="pb-2">
+          <v-select
+            dense
+            hide-details
+            outlined
+            color="primary"
+            background-color="white"
+            :items="invoiceTypes"
+            :label="frappe._('Type')"
+            v-model="invoiceType"
+            :disabled="invoiceType == 'Return'"
+          ></v-select>
+        </v-col>
+      </v-row>
 
     <v-row
       align="center"
@@ -568,6 +593,9 @@
 import { eventBus } from "../../bus";
 import format from "../../format";
 import Customer from "./Customer.vue";
+import TableDropdown from "./TableDropdown.vue";
+import OrderType from "./OrderType.vue";
+
 
 export default {
   mixins: [format],
@@ -584,6 +612,7 @@ export default {
       additional_discount_percentage: 0,
       total_tax: 0,
       items: [],
+      table: "",
       posOffers: [],
       posa_offers: [],
       posa_coupons: [],
@@ -621,6 +650,8 @@ export default {
 
   components: {
     Customer,
+    TableDropdown,
+    OrderType,
   },
 
   computed: {
@@ -969,6 +1000,7 @@ export default {
       }
       doc.doctype = "Sales Invoice";
       doc.is_pos = 1;
+      doc.custom_pos_table = this.table;
       doc.ignore_pricing_rule = 1;
       doc.company = doc.company || this.pos_profile.company;
       doc.pos_profile = doc.pos_profile || this.pos_profile.name;
@@ -2644,6 +2676,9 @@ export default {
     eventBus.on("add_item", (item) => {
       this.add_item(item);
     });
+    eventBus.on("update_table", (table) => {
+      this.table = table;
+    });
     eventBus.on("update_customer", (customer) => {
       this.customer = customer;
     });
@@ -2656,6 +2691,8 @@ export default {
     });
     eventBus.on("load_invoice", (data) => {
       this.new_invoice(data);
+      
+      eventBus.emit('set_table', data.custom_pos_table)
 
       if (this.invoice_doc.is_return) {
         this.discount_amount = -data.discount_amount;
