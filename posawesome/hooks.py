@@ -265,4 +265,20 @@ fixtures = [
         "doctype": "Property Setter",
         "filters": [["name", "in", ("Sales Invoice-posa_pos_opening_shift-no_copy")]],
     },
+
+    {
+        "doctype": "Custom Field",
+        "filters": [
+            [
+                "name",
+                "in",
+                (
+                    "Sales Invoice-custom_order_type",
+                    "Sales Invoice-custom_is_bumped",
+                    "Sales Invoice-custom_comments",
+                    "Sales Invoice-custom_pos_table",
+                )
+            ]
+        ]
+    }
 ]
