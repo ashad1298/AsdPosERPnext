@@ -1,0 +1,118 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "prompt",
+ "creation": "2024-04-17 06:49:45.480016",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "table_info_tab",
+  "no_of_seats",
+  "column_break_vub4k",
+  "minimum_seating",
+  "active_info_tab",
+  "pos_profile",
+  "column_break_mrm3x",
+  "occupied"
+ ],
+ "fields": [
+  {
+   "fieldname": "table_info_tab",
+   "fieldtype": "Tab Break",
+   "label": "Table Info"
+  },
+  {
+   "fieldname": "no_of_seats",
+   "fieldtype": "Int",
+   "label": "No of Seats"
+  },
+  {
+   "fieldname": "column_break_vub4k",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "minimum_seating",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Minimum Seating"
+  },
+  {
+   "fieldname": "active_info_tab",
+   "fieldtype": "Tab Break",
+   "label": "Active Info"
+  },
+  {
+   "fieldname": "pos_profile",
+   "fieldtype": "Link",
+   "label": "POS Profile",
+   "options": "POS Profile"
+  },
+  {
+   "fieldname": "column_break_mrm3x",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "occupied",
+   "fieldtype": "Check",
+   "label": "Occupied",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-09-06 21:56:26.273357",
+ "modified_by": "Administrator",
+ "module": "POSAwesome",
+ "name": "POS Table",
+ "naming_rule": "Set by user",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "URY Captain",
+   "select": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "URY Manager",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "print": 1,
+   "read": 1,
+   "role": "URY Cashier",
+   "select": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

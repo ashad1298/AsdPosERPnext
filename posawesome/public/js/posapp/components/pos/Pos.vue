@@ -1,14 +1,14 @@
 <template>
   <div fluid class="mt-2">
-    <TableUI v-if="is_table_view"></TableUI>
-    <ClosingDialog v-if="!is_table_view"></ClosingDialog>
+    <TableUI v-if="!dialog && is_table_view"></TableUI>
+    <ClosingDialog></ClosingDialog>
     <Drafts v-if="!is_table_view"></Drafts>
     <SalesOrders  v-if="!is_table_view"></SalesOrders>
     <Returns v-if="!is_table_view"></Returns>
     <NewAddress v-if="!is_table_view"></NewAddress>
     <MpesaPayments v-if="!is_table_view"></MpesaPayments>
     <Variants v-if="!is_table_view"></Variants>
-    <OpeningDialog v-if="dialog && !is_table_view" :dialog="dialog"></OpeningDialog>
+    <OpeningDialog v-if="dialog" :dialog="dialog"></OpeningDialog>
     <v-row v-show="!dialog && !is_table_view">
       <v-col
         v-show="!payment && !offers && !coupons"

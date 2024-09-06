@@ -118,7 +118,7 @@ export default {
   },
 
   created: function () {
-    eventBus.on('open_ClosingDialog', (data) => {
+    eventBus.on('open_ClosingDialog', (data) => { 
       this.closingDialog = true;
       this.dialog_data = data;
     });

@@ -33,65 +33,49 @@
         <span right>{{ pos_profile.name }}</span>
       </v-btn>
       <div class="text-center">
-        <v-menu offset-y>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark text v-bind="attrs" v-on="on"
-              >Menu</v-btn
+        <v-menu>
+        <template #activator="{ on, props }">
+          <v-btn color="primary" dark text v-bind="props" v-on="on">Menu</v-btn>
+        </template>
+        <v-list elevation="1" dense>
+          <v-list-item-group v-model="menu_item" color="primary">
+            <v-list-item
+              @click="close_shift_dialog"
+              v-if="!pos_profile.posa_hide_closing_shift && item == 0"
             >
-          </template>
-          <v-card class="mx-auto" max-width="300" tile>
-            <v-list dense>
-              <v-list-item-group v-model="menu_item" color="primary">
-                <v-list-item
-                  @click="close_shift_dialog"
-                  v-if="!pos_profile.posa_hide_closing_shift && item == 0"
-                >
-                  <v-list-item-icon>
-                    <v-icon>mdi-content-save-move-outline</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>{{
-                      __('Close Shift')
-                    }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item
-                  @click="print_last_invoice"
-                  v-if="
-                    pos_profile.posa_allow_print_last_invoice &&
-                    this.last_invoice
-                  "
-                >
-                  <v-list-item-icon>
-                    <v-icon>mdi-printer</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>{{
-                      __('Print Last Invoice')
-                    }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-divider class="my-0"></v-divider>
-                <v-list-item @click="logOut">
-                  <v-list-item-icon>
-                    <v-icon>mdi-logout</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>{{ __('Logout') }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item @click="go_about">
-                  <v-list-item-icon>
-                    <v-icon>mdi-information-outline</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>{{ __('About') }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-card>
-        </v-menu>
+              <template v-slot:prepend>
+                <v-icon>mdi-content-save-move-outline</v-icon>
+              </template>
+              <v-list-item-title>{{ __("Close Shift") }}</v-list-item-title>
+            </v-list-item>
+            <v-list-item
+              @click="print_last_invoice"
+              v-if="
+                pos_profile.posa_allow_print_last_invoice && this.last_invoice
+              "
+            >
+              <template v-slot:prepend>
+                <v-icon>mdi-printer</v-icon>
+              </template>
+              <v-list-item-title>
+                {{ __("Print Last Invoice") }}
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="logOut">
+              <template v-slot:prepend>
+                <v-icon>mdi-logout</v-icon>
+              </template>
+              <v-list-item-title>{{ __("Logout") }}</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="go_about">
+              <template v-slot:prepend>
+                <v-icon>mdi-information-outline</v-icon>
+              </template>
+              <v-list-item-title>{{ __("About") }}</v-list-item-title>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-menu>
       </div>
     </v-app-bar>
     <v-navigation-drawer
